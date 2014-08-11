@@ -55,10 +55,9 @@ public class TestAmazing {
                 "I        I        I     I  I        I        I \n" +
                 ":--:--:--:--:--:--:--:--:  :--:--:--:--:--:--:\n";
 
-        Amazing.random = new Random(0);
-        Amazing.doit(15, 20);
+        String result = Amazing.buildMaze(new Random(0), 15, 20);
 
-        assertEquals("Should have the maze that was expected", expected, Amazing.result.toString());
+        assertEquals("Should have the maze that was expected", expected, result.toString());
     }
 
     @Test
@@ -77,9 +76,8 @@ public class TestAmazing {
                 "I  I  I  I  I \n" +
                 ":--:--:  :--:\n";
 
-        Amazing.random = new Random(100);
-        Amazing.doit(4, 5);
-        assertEquals("Should have the maze that was expected", expected, Amazing.result.toString());
+        String result = Amazing.buildMaze(new Random(100), 4, 5);
+        assertEquals("Should have the maze that was expected", expected, result.toString());
 
     }
 }

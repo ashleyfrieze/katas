@@ -11,10 +11,16 @@ package net.silkandspinach;
 import java.util.Random;
 
 public class Amazing {
-    static int target = 0;      // where GOTO goes
-    public static Random random = new Random(0);
-    static StringBuffer result = new StringBuffer();
+    private static int target = 0;      // where GOTO goes
+    private static Random random = new Random(0);
+    private static StringBuffer result = new StringBuffer();
 
+    public static String buildMaze(Random randomGenerator, int horizontal, int vertical) {
+    	random = randomGenerator;
+    	doit(horizontal, vertical);
+    	return result.toString();
+    }
+    
     public static void main(String[] args) {
         doit(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
         System.out.println(result);
@@ -40,7 +46,7 @@ public class Amazing {
         target = lineno;
     }
 
-    public static void doit(int horizontal, int vertical) {
+    private static void doit(int horizontal, int vertical) {
         clear();
         print("Amazing - Copyright by Creative Computing, Morristown, NJ");
         println();
