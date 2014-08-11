@@ -11,7 +11,10 @@ package net.silkandspinach;
 import java.util.Random;
 
 public class Amazing {
-    private static int target = 0;      // where GOTO goes
+    private static final String CLOSED_WALL = ":--";
+	private static final String OPENING = ":  ";
+	private static final String RIGHT_WALL = ":";
+	private static int target = 0;      // where GOTO goes
     private static Random random = new Random(0);
     private static StringBuffer result = new StringBuffer();
 
@@ -46,13 +49,11 @@ public class Amazing {
         target = lineno;
     }
 
-    private static void doit(int horizontal, int vertical) {
+    private static void doit(int h, int v) {
         clear();
         print("Amazing - Copyright by Creative Computing, Morristown, NJ");
         println();
 
-        int h = horizontal;
-        int v = vertical;
         if (h == 1 || v == 1) return;
 
         int[][] wArray = new int[h + 1][v + 1];
@@ -69,16 +70,7 @@ public class Amazing {
         int z = 0;
         int x = rnd(h);
 
-        // 130:170
-        for (int i = 1; i <= h; i++) {
-            if (i == x)
-                print(":  ");
-            else
-                print(":--");
-        }
-        // 180
-        print(":");
-        println();
+        printTopLine(h, x);
 
         // 190
         int c = 1;
@@ -655,17 +647,32 @@ public class Amazing {
             print(" ");   // 1280
             println();
 
-            for (int i = 1; i <= h; i++) {
-                if (vArray[i][j] == 0)
-                    print(":--");   // 1300, 1340
-                else if (vArray[i][j] == 2)
-                    print(":--");  // 1310, 1340
-                else
-                    print(":  "); // 1320
-            }
-
-            print(":");    // 1360
-            println();
+            printBottomLine(h, vArray, j);
         }
     }
+
+	private static void printBottomLine(int width, int[][] maze, int lastLineIndex) {
+		for (int i = 1; i <= width; i++) {
+		    if (maze[i][lastLineIndex] == 0 || maze[i][lastLineIndex] == 2) {
+		        print(CLOSED_WALL);
+		    } else {
+		        print(OPENING);
+		    }
+		}
+
+		print(RIGHT_WALL);    // 1360
+		println();
+	}
+
+	private static void printTopLine(int width, int entrance) {
+        for (int i = 1; i <= width; i++) {
+            if (i == entrance)
+                print(OPENING);
+            else
+                print(CLOSED_WALL);
+        }
+        
+        print(RIGHT_WALL);
+        println();
+	}
 }
