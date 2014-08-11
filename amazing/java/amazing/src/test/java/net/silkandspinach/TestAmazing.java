@@ -13,15 +13,15 @@ public class TestAmazing {
 	private static final String fourByFiveWithRandom100Seed = 
             "Amazing - Copyright by Creative Computing, Morristown, NJ\n" +
             ":--:--:  :--:\n" +
-            "I     I     I \n" +
+            "I     I     I\n" +
             ":  :--:  :  :\n" +
-            "I  I     I  I \n" +
+            "I  I     I  I\n" +
             ":  :  :--:  :\n" +
-            "I  I  I     I \n" +
+            "I  I  I     I\n" +
             ":  :  :  :  :\n" +
-            "I  I  I  I  I \n" +
+            "I  I  I  I  I\n" +
             ":  :--:  :  :\n" +
-            "I  I  I  I  I \n" +
+            "I  I  I  I  I\n" +
             ":--:--:  :--:\n";
 	
     @Test
@@ -29,45 +29,45 @@ public class TestAmazing {
         String expected =
                 "Amazing - Copyright by Creative Computing, Morristown, NJ\n" +
                 ":--:--:--:--:--:--:--:--:--:--:  :--:--:--:--:\n" +
-                "I  I           I        I     I     I        I \n" +
+                "I  I           I        I     I     I        I\n" +
                 ":  :  :  :  :  :  :--:  :  :  :  :--:  :--:  :\n" +
-                "I     I  I  I  I     I     I     I     I  I  I \n" +
+                "I     I  I  I  I     I     I     I     I  I  I\n" +
                 ":--:--:  :  :--:  :  :--:--:--:--:  :  :  :  :\n" +
-                "I     I  I        I  I              I  I     I \n" +
+                "I     I  I        I  I              I  I     I\n" +
                 ":  :  :  :--:--:--:  :  :  :--:--:--:--:--:--:\n" +
-                "I  I     I        I     I  I     I        I  I \n" +
+                "I  I     I        I     I  I     I        I  I\n" +
                 ":--:--:  :--:  :--:  :--:  :  :  :  :--:  :  :\n" +
-                "I     I        I        I  I  I     I     I  I \n" +
+                "I     I        I        I  I  I     I     I  I\n" +
                 ":  :  :--:--:--:  :--:  :  :  :--:--:  :--:  :\n" +
-                "I  I              I     I  I  I     I  I     I \n" +
+                "I  I              I     I  I  I     I  I     I\n" +
                 ":  :--:--:--:--:--:--:  :  :  :  :--:  :--:  :\n" +
-                "I        I           I  I  I  I     I  I     I \n" +
+                "I        I           I  I  I  I     I  I     I\n" +
                 ":  :--:  :--:  :  :  :  :  :  :--:  :  :  :--:\n" +
-                "I  I     I     I  I  I  I  I     I  I  I  I  I \n" +
+                "I  I     I     I  I  I  I  I     I  I  I  I  I\n" +
                 ":  :  :--:  :--:  :  :  :  :--:  :  :  :  :  :\n" +
-                "I  I        I     I  I  I        I  I  I  I  I \n" +
+                "I  I        I     I  I  I        I  I  I  I  I\n" +
                 ":  :--:  :--:  :--:  :  :--:--:--:  :  :  :  :\n" +
-                "I     I     I  I  I  I  I     I        I     I \n" +
+                "I     I     I  I  I  I  I     I        I     I\n" +
                 ":--:  :--:  :  :  :  :--:  :  :  :--:--:  :--:\n" +
-                "I  I     I  I     I     I  I  I     I  I     I \n" +
+                "I  I     I  I     I     I  I  I     I  I     I\n" +
                 ":  :--:  :--:--:--:  :  :  :  :--:  :  :  :  :\n" +
-                "I     I     I     I  I  I  I     I  I  I  I  I \n" +
+                "I     I     I     I  I  I  I     I  I  I  I  I\n" +
                 ":  :  :--:  :  :  :--:  :  :--:  :  :  :  :  :\n" +
-                "I  I        I  I     I  I     I     I  I  I  I \n" +
+                "I  I        I  I     I  I     I     I  I  I  I\n" +
                 ":  :--:--:  :--:  :  :  :--:  :--:--:  :  :--:\n" +
-                "I  I     I        I  I     I     I     I     I \n" +
+                "I  I     I        I  I     I     I     I     I\n" +
                 ":  :  :--:--:--:--:  :  :--:  :  :  :--:--:  :\n" +
-                "I     I           I  I     I  I  I  I     I  I \n" +
+                "I     I           I  I     I  I  I  I     I  I\n" +
                 ":  :--:  :--:--:--:  :--:  :  :  :  :  :  :  :\n" +
-                "I  I                 I     I  I  I     I  I  I \n" +
+                "I  I                 I     I  I  I     I  I  I\n" +
                 ":  :  :--:--:--:--:--:  :--:  :--:  :--:  :  :\n" +
-                "I  I  I  I           I     I     I  I     I  I \n" +
+                "I  I  I  I           I     I     I  I     I  I\n" +
                 ":  :  :  :  :--:  :  :--:  :--:  :  :  :--:  :\n" +
-                "I  I  I     I     I  I  I     I     I  I     I \n" +
+                "I  I  I     I     I  I  I     I     I  I     I\n" +
                 ":--:  :--:--:  :  :  :  :  :  :--:--:  :--:  :\n" +
-                "I     I        I  I  I  I  I  I     I        I \n" +
+                "I     I        I  I  I  I  I  I     I        I\n" +
                 ":  :--:  :--:--:  :  :  :  :  :--:  :  :--:--:\n" +
-                "I        I        I     I  I        I        I \n" +
+                "I        I        I     I  I        I        I\n" +
                 ":--:--:--:--:--:--:--:--:  :--:--:--:--:--:--:\n";
 
         String result = Amazing.buildMaze(new Random(0), 15, 20);

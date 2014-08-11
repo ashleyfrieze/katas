@@ -633,8 +633,11 @@ public class Amazing {
 
         }
 
-        // 1200:
-        for (int j = 1; j <= v; j++) {
+        printMazeInnards(h, v, vArray);
+    }
+
+	private static void printMazeInnards(int h, int v, int[][] vArray) {
+		for (int j = 1; j <= v; j++) {
             print("I");        // 1210
 
             for (int i = 1; i <= h; i++) {
@@ -643,15 +646,13 @@ public class Amazing {
                 else
                     print("  I");  // 1260
             }
-
-            print(" ");   // 1280
             println();
 
-            printBottomLine(h, vArray, j);
+            printSeparatorLine(h, vArray, j);
         }
-    }
+	}
 
-	private static void printBottomLine(int width, int[][] maze, int lastLineIndex) {
+	private static void printSeparatorLine(int width, int[][] maze, int lastLineIndex) {
 		for (int i = 1; i <= width; i++) {
 		    if (maze[i][lastLineIndex] == 0 || maze[i][lastLineIndex] == 2) {
 		        print(CLOSED_WALL);
