@@ -11,7 +11,10 @@ package net.silkandspinach;
 import java.util.Random;
 
 public class Amazing {
-    private static final String CLOSED_WALL = ":--";
+    private static final String GAP_THEN_BORDER = "  I";
+	private static final String GAP = "   ";
+	private static final String LEFT_BORDER = "I";
+	private static final String CLOSED_WALL = ":--";
 	private static final String OPENING = ":  ";
 	private static final String RIGHT_WALL = ":";
 	private static int target = 0;      // where GOTO goes
@@ -636,19 +639,20 @@ public class Amazing {
         printMazeInnards(h, v, vArray);
     }
 
-	private static void printMazeInnards(int h, int v, int[][] vArray) {
-		for (int j = 1; j <= v; j++) {
-            print("I");        // 1210
+	private static void printMazeInnards(int height, int width, int[][] maze) {
+		for (int j = 1; j <= width; j++) {
+            print(LEFT_BORDER);
 
-            for (int i = 1; i <= h; i++) {
-                if (vArray[i][j] >= 2)
-                    print("   ");  // 1240
-                else
-                    print("  I");  // 1260
+            for (int i = 1; i <= height; i++) {
+                if (maze[i][j] >= 2) {
+                    print(GAP);
+                } else {
+                    print(GAP_THEN_BORDER);
+                }
             }
             println();
 
-            printSeparatorLine(h, vArray, j);
+            printSeparatorLine(height, maze, j);
         }
 	}
 
