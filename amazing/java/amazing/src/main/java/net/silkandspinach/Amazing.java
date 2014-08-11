@@ -45,7 +45,7 @@ public class Amazing {
         result.append(text);
     }
 
-    public static int rnd(int count) {
+    public static int generateRandom(int count) {
         return (int) (count * random.nextFloat()) + 1;
     }
 
@@ -62,7 +62,7 @@ public class Amazing {
         	return;
         }
 
-        int entrance = rnd(width);
+        int entrance = generateRandom(width);
 
         printTopLine(width, entrance);
 
@@ -93,25 +93,17 @@ public class Amazing {
                 case 210:
                     if (r != width)
                         nextState(250);
-                    else
-                        nextState(220);
+                    else {
+                        r = 1;
+	                    if (s != height) {
+	                        s++;
+	                    } else {
+	                        s = 1;
+	                    }
+                        nextState(260);
+                    }
                     break;
-                case 220:
-                    if (s != height)
-                        nextState(240);
-                    else
-                        nextState(230);
-                    break;
-                case 230:
-                    r = 1;
-                    s = 1;
-                    nextState(260);
-                    break;
-                case 240:
-                    r = 1;
-                    s++;
-                    nextState(260);
-                    break;
+
                 case 250:
                     r++;
                     nextState(260);
@@ -159,10 +151,8 @@ public class Amazing {
                         nextState(330);
                     break;
                 case 330:
-                    x = rnd(3);
-                    nextState(340);
-                    break;
-                case 340:
+                    x = generateRandomMazeElement();
+
                     if (x == 1)
                         nextState(940);
                     else if (x == 2)
@@ -195,7 +185,7 @@ public class Amazing {
                         nextState(390);
                     break;
                 case 390:
-                    x = rnd(3);
+                    x = generateRandomMazeElement();
                     nextState(400);
                     break;
                 case 400:
@@ -209,7 +199,7 @@ public class Amazing {
                         nextState(410);
                     break;
                 case 410:
-                    x = rnd(2);
+                    x = generateRandom(2);
                     nextState(420);
                     break;
                 case 420:
@@ -255,7 +245,7 @@ public class Amazing {
                         nextState(490);
                     break;
                 case 490:
-                    x = rnd(3);
+                    x = generateRandomMazeElement();
                     nextState(500);
                     break;
                 case 500:
@@ -269,7 +259,7 @@ public class Amazing {
                         nextState(510);
                     break;
                 case 510:
-                    x = rnd(2);
+                    x = generateRandom(2);
                     nextState(520);
                     break;
                 case 520:
@@ -303,7 +293,7 @@ public class Amazing {
                         nextState(570);
                     break;
                 case 570:
-                    x = rnd(2);
+                    x = generateRandom(2);
                     nextState(580);
                     break;
                 case 580:
@@ -364,7 +354,7 @@ public class Amazing {
                         nextState(680);
                     break;
                 case 680:
-                    x = rnd(3);
+                    x = generateRandomMazeElement();
                     nextState(690);
                     break;
                 case 690:
@@ -378,7 +368,7 @@ public class Amazing {
                         nextState(700);
                     break;
                 case 700:
-                    x = rnd(2);
+                    x = generateRandom(2);
                     nextState(710);
                     break;
                 case 710:
@@ -412,7 +402,7 @@ public class Amazing {
                         nextState(760);
                     break;
                 case 760:
-                    x = rnd(2);
+                    x = generateRandom(2);
                     nextState(770);
                     break;
                 case 770:
@@ -461,7 +451,7 @@ public class Amazing {
                         nextState(850);
                     break;
                 case 850:
-                    x = rnd(2);
+                    x = generateRandom(2);
                     nextState(860);
                     break;
                 case 860:
@@ -638,6 +628,10 @@ public class Amazing {
         }
         
         return vArray;
+	}
+
+	private static int generateRandomMazeElement() {
+		return generateRandom(3);
 	}
 
 	private static int[][] constructBlankMaze1BasedArray(int width, int height) {
