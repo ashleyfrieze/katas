@@ -3,15 +3,17 @@ package net.silkandspinach;
 // Copyright 2003, William C. Wake. All rights reserved.
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 import java.util.Random;
 
 import org.junit.Test;
 
 public class TestAmazing {
+	private static final String copyRightMessage = "Amazing - Copyright by Creative Computing, Morristown, NJ\n";
 	// test data for a small maze
 	private static final String fourByFiveWithRandom100Seed = 
-            "Amazing - Copyright by Creative Computing, Morristown, NJ\n" +
+			copyRightMessage +
             ":--:--:  :--:\n" +
             "I     I     I\n" +
             ":  :--:  :  :\n" +
@@ -27,7 +29,7 @@ public class TestAmazing {
     @Test
 	public void testSeed0size15x20() {
         String expected =
-                "Amazing - Copyright by Creative Computing, Morristown, NJ\n" +
+        		copyRightMessage +
                 ":--:--:--:--:--:--:--:--:--:--:  :--:--:--:--:\n" +
                 "I  I           I        I     I     I        I\n" +
                 ":  :  :  :  :  :  :--:  :  :  :  :--:  :--:  :\n" +
@@ -89,4 +91,18 @@ public class TestAmazing {
         result = Amazing.buildMaze(new Random(100), 4, 5);
         assertEquals("Should have the maze that was expected", fourByFiveWithRandom100Seed, result.toString());
     }
+    
+    @Test
+    public void whenSizeIsTooSmall() {
+    	assertNotBuilt(1, 1);
+    	assertNotBuilt(1, 0);
+    	assertNotBuilt(0, 1);
+    	assertNotBuilt(1, 2);
+    	assertNotBuilt(2, 1);
+    	assertNotBuilt(-1, -1);
+    }
+
+	private void assertNotBuilt(int h, int v) {
+		assertThat(Amazing.buildMaze(new Random(), h,  v).toString(), is(copyRightMessage));
+	}
 }

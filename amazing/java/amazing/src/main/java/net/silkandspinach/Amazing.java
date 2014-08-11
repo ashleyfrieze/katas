@@ -11,13 +11,14 @@ package net.silkandspinach;
 import java.util.Random;
 
 public class Amazing {
-    private static final String GAP_THEN_BORDER = "  I";
+    private static final int STATE_FINISHED = 1200;
+	private static final String GAP_THEN_BORDER = "  I";
 	private static final String GAP = "   ";
 	private static final String LEFT_BORDER = "I";
 	private static final String CLOSED_WALL = ":--";
 	private static final String OPENING = ":  ";
 	private static final String RIGHT_WALL = ":";
-	private static int target = 0;      // where GOTO goes
+	private static int nextState = 0;      // where GOTO goes
     private static Random random = new Random(0);
     private static StringBuffer result = new StringBuffer();
 
@@ -48,596 +49,608 @@ public class Amazing {
         return (int) (count * random.nextFloat()) + 1;
     }
 
-    public static void GOTO(int lineno) {
-        target = lineno;
+    public static void nextState(int lineno) {
+        nextState = lineno;
     }
 
-    private static void doit(int h, int v) {
+    private static void doit(int width, int height) {
         clear();
         print("Amazing - Copyright by Creative Computing, Morristown, NJ");
         println();
 
-        if (h == 1 || v == 1) return;
-
-        int[][] wArray = new int[h + 1][v + 1];
-        for (int i = 0; i <= h; i++) {
-            wArray[i] = new int[v + 1];
+        if (tooSmall(width, height)) {
+        	return;
         }
 
-        int[][] vArray = new int[h + 1][v + 1];
-        for (int i = 0; i <= h; i++) {
-            vArray[i] = new int[v + 1];
-        }
+        int entrance = rnd(width);
 
+        printTopLine(width, entrance);
+
+        printMazeInnards(width, height, generateMaze(width, height, entrance));
+    }
+
+	private static int[][] generateMaze(int width, int height, int entrance) {
+        int[][] wArray = constructBlankMaze1BasedArray(width, height);
+        int[][] vArray = constructBlankMaze1BasedArray(width, height);
+        
         int q = 0;
         int z = 0;
-        int x = rnd(h);
-
-        printTopLine(h, x);
-
-        // 190
+        
+		// 190
         int c = 1;
-        wArray[x][1] = c;
+        wArray[entrance][1] = c;
         c++;
 
         // 200
-        int r = x;
+        int r = entrance;
         int s = 1;
-        GOTO(270);
+        nextState(270);
+        
+        int x = entrance;
 
-        while (target != -1) {
-            switch (target) {
+        while (nextState != STATE_FINISHED) {
+            switch (nextState) {
                 case 210:
-                    if (r != h)
-                        GOTO(250);
+                    if (r != width)
+                        nextState(250);
                     else
-                        GOTO(220);
-                    continue;
+                        nextState(220);
+                    break;
                 case 220:
-                    if (s != v)
-                        GOTO(240);
+                    if (s != height)
+                        nextState(240);
                     else
-                        GOTO(230);
-                    continue;
+                        nextState(230);
+                    break;
                 case 230:
                     r = 1;
                     s = 1;
-                    GOTO(260);
-                    continue;
+                    nextState(260);
+                    break;
                 case 240:
                     r = 1;
                     s++;
-                    GOTO(260);
-                    continue;
+                    nextState(260);
+                    break;
                 case 250:
                     r++;
-                    GOTO(260);
-                    continue;
+                    nextState(260);
+                    break;
                 case 260:
                     if (wArray[r][s] == 0)
-                        GOTO(210);
+                        nextState(210);
                     else
-                        GOTO(270);
-                    continue;
+                        nextState(270);
+                    break;
                 case 270:
                     if (r - 1 == 0)
-                        GOTO(600);
+                        nextState(600);
                     else
-                        GOTO(280);
-                    continue;
+                        nextState(280);
+                    break;
                 case 280:
                     if (wArray[r - 1][s] != 0)
-                        GOTO(600);
+                        nextState(600);
                     else
-                        GOTO(290);
-                    continue;
+                        nextState(290);
+                    break;
                 case 290:
                     if (s - 1 == 0)
-                        GOTO(430);
+                        nextState(430);
                     else
-                        GOTO(300);
-                    continue;
+                        nextState(300);
+                    break;
                 case 300:
                     if (wArray[r][s - 1] != 0)
-                        GOTO(430);
+                        nextState(430);
                     else
-                        GOTO(310);
-                    continue;
+                        nextState(310);
+                    break;
                 case 310:
-                    if (r == h)
-                        GOTO(350);
+                    if (r == width)
+                        nextState(350);
                     else
-                        GOTO(320);
-                    continue;
+                        nextState(320);
+                    break;
                 case 320:
                     if (wArray[r + 1][s] != 0)
-                        GOTO(350);
+                        nextState(350);
                     else
-                        GOTO(330);
-                    continue;
+                        nextState(330);
+                    break;
                 case 330:
                     x = rnd(3);
-                    GOTO(340);
-                    continue;
+                    nextState(340);
+                    break;
                 case 340:
                     if (x == 1)
-                        GOTO(940);
+                        nextState(940);
                     else if (x == 2)
-                        GOTO(980);
+                        nextState(980);
                     else if (x == 3)
-                        GOTO(1020);
+                        nextState(1020);
                     else
-                        GOTO(350);
-                    continue;
+                        nextState(350);
+                    break;
                 case 350:
-                    if (s != v)
-                        GOTO(380);
+                    if (s != height)
+                        nextState(380);
                     else
-                        GOTO(360);
-                    continue;
+                        nextState(360);
+                    break;
                 case 360:
                     if (z == 1)
-                        GOTO(410);
+                        nextState(410);
                     else
-                        GOTO(370);
-                    continue;
+                        nextState(370);
+                    break;
                 case 370:
                     q = 1;
-                    GOTO(390);
-                    continue;
+                    nextState(390);
+                    break;
                 case 380:
                     if (wArray[r][s + 1] != 0)
-                        GOTO(410);
+                        nextState(410);
                     else
-                        GOTO(390);
-                    continue;
+                        nextState(390);
+                    break;
                 case 390:
                     x = rnd(3);
-                    GOTO(400);
-                    continue;
+                    nextState(400);
+                    break;
                 case 400:
                     if (x == 1)
-                        GOTO(940);
+                        nextState(940);
                     else if (x == 2)
-                        GOTO(980);
+                        nextState(980);
                     else if (x == 3)
-                        GOTO(1090);
+                        nextState(1090);
                     else
-                        GOTO(410);
-                    continue;
+                        nextState(410);
+                    break;
                 case 410:
                     x = rnd(2);
-                    GOTO(420);
-                    continue;
+                    nextState(420);
+                    break;
                 case 420:
                     if (x == 1)
-                        GOTO(940);
+                        nextState(940);
                     else if (x == 2)
-                        GOTO(980);
+                        nextState(980);
                     else
-                        GOTO(430);
-                    continue;
+                        nextState(430);
+                    break;
                 case 430:
-                    if (r == h)
-                        GOTO(530);
+                    if (r == width)
+                        nextState(530);
                     else
-                        GOTO(440);
-                    continue;
+                        nextState(440);
+                    break;
                 case 440:
                     if (wArray[r + 1][s] != 0)
-                        GOTO(530);
+                        nextState(530);
                     else
-                        GOTO(450);
-                    continue;
+                        nextState(450);
+                    break;
                 case 450:
-                    if (s != v)
-                        GOTO(480);
+                    if (s != height)
+                        nextState(480);
                     else
-                        GOTO(460);
-                    continue;
+                        nextState(460);
+                    break;
                 case 460:
                     if (z == 1)
-                        GOTO(510);
+                        nextState(510);
                     else
-                        GOTO(470);
-                    continue;
+                        nextState(470);
+                    break;
                 case 470:
                     q = 1;
-                    GOTO(490);
-                    continue;
+                    nextState(490);
+                    break;
                 case 480:
                     if (wArray[r][s + 1] != 0)
-                        GOTO(510);
+                        nextState(510);
                     else
-                        GOTO(490);
-                    continue;
+                        nextState(490);
+                    break;
                 case 490:
                     x = rnd(3);
-                    GOTO(500);
-                    continue;
+                    nextState(500);
+                    break;
                 case 500:
                     if (x == 1)
-                        GOTO(940);
+                        nextState(940);
                     else if (x == 2)
-                        GOTO(1020);
+                        nextState(1020);
                     else if (x == 3)
-                        GOTO(1090);
+                        nextState(1090);
                     else
-                        GOTO(510);
-                    continue;
+                        nextState(510);
+                    break;
                 case 510:
                     x = rnd(2);
-                    GOTO(520);
-                    continue;
+                    nextState(520);
+                    break;
                 case 520:
                     if (x == 1)
-                        GOTO(940);
+                        nextState(940);
                     else if (x == 2)
-                        GOTO(1020);
+                        nextState(1020);
                     else
-                        GOTO(530);
-                    continue;
+                        nextState(530);
+                    break;
                 case 530:
-                    if (s != v)
-                        GOTO(560);
+                    if (s != height)
+                        nextState(560);
                     else
-                        GOTO(540);
-                    continue;
+                        nextState(540);
+                    break;
                 case 540:
                     if (z == 1)
-                        GOTO(590);
+                        nextState(590);
                     else
-                        GOTO(550);
-                    continue;
+                        nextState(550);
+                    break;
                 case 550:
                     q = 1;
-                    GOTO(570);
-                    continue;
+                    nextState(570);
+                    break;
                 case 560:
                     if (wArray[r][s + 1] != 0)
-                        GOTO(590);
+                        nextState(590);
                     else
-                        GOTO(570);
-                    continue;
+                        nextState(570);
+                    break;
                 case 570:
                     x = rnd(2);
-                    GOTO(580);
-                    continue;
+                    nextState(580);
+                    break;
                 case 580:
                     if (x == 1)
-                        GOTO(940);
+                        nextState(940);
                     else if (x == 2)
-                        GOTO(1090);
+                        nextState(1090);
                     else
-                        GOTO(590);
-                    continue;
+                        nextState(590);
+                    break;
                 case 590:
-                    GOTO(940);
-                    continue;
+                    nextState(940);
+                    break;
                 case 600:
                     if (s - 1 == 0)
-                        GOTO(790);
+                        nextState(790);
                     else
-                        GOTO(610);
-                    continue;
+                        nextState(610);
+                    break;
                 case 610:
                     if (wArray[r][s - 1] != 0)
-                        GOTO(790);
+                        nextState(790);
                     else
-                        GOTO(620);
-                    continue;
+                        nextState(620);
+                    break;
                 case 620:
-                    if (r == h)
-                        GOTO(720);
+                    if (r == width)
+                        nextState(720);
                     else
-                        GOTO(630);
-                    continue;
+                        nextState(630);
+                    break;
                 case 630:
                     if (wArray[r + 1][s] != 0)
-                        GOTO(720);
+                        nextState(720);
                     else
-                        GOTO(640);
-                    continue;
+                        nextState(640);
+                    break;
                 case 640:
-                    if (s != v)
-                        GOTO(670);
+                    if (s != height)
+                        nextState(670);
                     else
-                        GOTO(650);
-                    continue;
+                        nextState(650);
+                    break;
                 case 650:
                     if (z == 1)
-                        GOTO(700);
+                        nextState(700);
                     else
-                        GOTO(660);
-                    continue;
+                        nextState(660);
+                    break;
                 case 660:
                     q = 1;
-                    GOTO(680);
-                    continue;
+                    nextState(680);
+                    break;
                 case 670:
                     if (wArray[r][s + 1] != 0)
-                        GOTO(700);
+                        nextState(700);
                     else
-                        GOTO(680);
-                    continue;
+                        nextState(680);
+                    break;
                 case 680:
                     x = rnd(3);
-                    GOTO(690);
-                    continue;
+                    nextState(690);
+                    break;
                 case 690:
                     if (x == 1)
-                        GOTO(980);
+                        nextState(980);
                     else if (x == 2)
-                        GOTO(1020);
+                        nextState(1020);
                     else if (x == 3)
-                        GOTO(1090);
+                        nextState(1090);
                     else
-                        GOTO(700);
-                    continue;
+                        nextState(700);
+                    break;
                 case 700:
                     x = rnd(2);
-                    GOTO(710);
-                    continue;
+                    nextState(710);
+                    break;
                 case 710:
                     if (x == 1)
-                        GOTO(980);
+                        nextState(980);
                     else if (x == 2)
-                        GOTO(1020);
+                        nextState(1020);
                     else
-                        GOTO(720);
-                    continue;
+                        nextState(720);
+                    break;
                 case 720:
-                    if (s != v)
-                        GOTO(750);
+                    if (s != height)
+                        nextState(750);
                     else
-                        GOTO(730);
-                    continue;
+                        nextState(730);
+                    break;
                 case 730:
                     if (z == 1)
-                        GOTO(780);
+                        nextState(780);
                     else
-                        GOTO(740);
-                    continue;
+                        nextState(740);
+                    break;
                 case 740:
                     q = 1;
-                    GOTO(760);
-                    continue;
+                    nextState(760);
+                    break;
                 case 750:
                     if (wArray[r][s + 1] != 0)
-                        GOTO(780);
+                        nextState(780);
                     else
-                        GOTO(760);
-                    continue;
+                        nextState(760);
+                    break;
                 case 760:
                     x = rnd(2);
-                    GOTO(770);
-                    continue;
+                    nextState(770);
+                    break;
                 case 770:
                     if (x == 1)
-                        GOTO(980);
+                        nextState(980);
                     else if (x == 2)
-                        GOTO(1090);
+                        nextState(1090);
                     else
-                        GOTO(780);
-                    continue;
+                        nextState(780);
+                    break;
                 case 780:
-                    GOTO(980);
-                    continue;
+                    nextState(980);
+                    break;
                 case 790:
-                    if (r == h)
-                        GOTO(880);
+                    if (r == width)
+                        nextState(880);
                     else
-                        GOTO(800);
-                    continue;
+                        nextState(800);
+                    break;
                 case 800:
                     if (wArray[r + 1][s] != 0)
-                        GOTO(880);
+                        nextState(880);
                     else
-                        GOTO(810);
-                    continue;
+                        nextState(810);
+                    break;
                 case 810:
-                    if (s != v)
-                        GOTO(840);
+                    if (s != height)
+                        nextState(840);
                     else
-                        GOTO(820);
-                    continue;
+                        nextState(820);
+                    break;
                 case 820:
                     if (z == 1)
-                        GOTO(870);
+                        nextState(870);
                     else
-                        GOTO(830);
-                    continue;
+                        nextState(830);
+                    break;
                 case 830:
                     q = 1;
-                    GOTO(990);
-                    continue;
+                    nextState(990);
+                    break;
                 case 840:
                     if (wArray[r][s + 1] != 0)
-                        GOTO(870);
+                        nextState(870);
                     else
-                        GOTO(850);
-                    continue;
+                        nextState(850);
+                    break;
                 case 850:
                     x = rnd(2);
-                    GOTO(860);
-                    continue;
+                    nextState(860);
+                    break;
                 case 860:
                     if (x == 1)
-                        GOTO(1020);
+                        nextState(1020);
                     else if (x == 2)
-                        GOTO(1090);
+                        nextState(1090);
                     else
-                        GOTO(870);
-                    continue;
+                        nextState(870);
+                    break;
                 case 870:
-                    GOTO(1020);
-                    continue;
+                    nextState(1020);
+                    break;
                 case 880:
-                    if (s != v)
-                        GOTO(910);
+                    if (s != height)
+                        nextState(910);
                     else
-                        GOTO(890);
-                    continue;
+                        nextState(890);
+                    break;
                 case 890:
                     if (z == 1)
-                        GOTO(930);
+                        nextState(930);
                     else
-                        GOTO(900);
-                    continue;
+                        nextState(900);
+                    break;
                 case 900:
                     q = 1;
-                    GOTO(920);
-                    continue;
+                    nextState(920);
+                    break;
                 case 910:
                     if (wArray[r][s + 1] != 0)
-                        GOTO(930);
+                        nextState(930);
                     else
-                        GOTO(920);
-                    continue;
+                        nextState(920);
+                    break;
                 case 920:
-                    GOTO(1090);
-                    continue;
+                    nextState(1090);
+                    break;
                 case 930:
-                    GOTO(1190);
-                    continue;
+                    nextState(1190);
+                    break;
                 case 940:
                     wArray[r - 1][s] = c;
-                    GOTO(950);
-                    continue;
+                    nextState(950);
+                    break;
                 case 950:
                     c++;
                     vArray[r - 1][s] = 2;
                     r--;
-                    GOTO(960);
-                    continue;
+                    nextState(960);
+                    break;
                 case 960:
-                    if (c == h * v + 1)
-                        GOTO(1200);
+                    if (c == width * height + 1)
+                        nextState(STATE_FINISHED);
                     else
-                        GOTO(970);
-                    continue;
+                        nextState(970);
+                    break;
                 case 970:
                     q = 0;
-                    GOTO(270);
-                    continue;
+                    nextState(270);
+                    break;
                 case 980:
                     wArray[r][s - 1] = c;
-                    GOTO(990);
-                    continue;
+                    nextState(990);
+                    break;
                 case 990:
                     c++;
-                    GOTO(1000);
-                    continue;
+                    nextState(1000);
+                    break;
                 case 1000:
                     vArray[r][s - 1] = 1;
                     s--;
-                    if (c == h * v + 1)
-                        GOTO(1200);
+                    if (c == width * height + 1)
+                        nextState(1200);
                     else
-                        GOTO(1010);
-                    continue;
+                        nextState(1010);
+                    break;
                 case 1010:
                     q = 0;
-                    GOTO(270);
-                    continue;
+                    nextState(270);
+                    break;
                 case 1020:
                     wArray[r + 1][s] = c;
-                    GOTO(1030);
-                    continue;
+                    nextState(1030);
+                    break;
                 case 1030:
                     c++;
                     if (vArray[r][s] == 0)
-                        GOTO(1050);
+                        nextState(1050);
                     else
-                        GOTO(1040);
-                    continue;
+                        nextState(1040);
+                    break;
                 case 1040:
                     vArray[r][s] = 3;
-                    GOTO(1060);
-                    continue;
+                    nextState(1060);
+                    break;
                 case 1050:
                     vArray[r][s] = 2;
-                    GOTO(1060);
-                    continue;
+                    nextState(1060);
+                    break;
                 case 1060:
                     r++;
-                    GOTO(1070);
-                    continue;
+                    nextState(1070);
+                    break;
                 case 1070:
-                    if (c == h * v + 1)
-                        GOTO(1200);
+                    if (c == width * height + 1)
+                        nextState(1200);
                     else
-                        GOTO(1080);
-                    continue;
+                        nextState(1080);
+                    break;
                 case 1080:
-                    GOTO(600);
-                    continue;
+                    nextState(600);
+                    break;
                 case 1090:
                     if (q == 1)
-                        GOTO(1150);
+                        nextState(1150);
                     else
-                        GOTO(1100);
-                    continue;
+                        nextState(1100);
+                    break;
                 case 1100:
                     wArray[r][s + 1] = c;
                     c++;
                     if (vArray[r][s] == 0)
-                        GOTO(1120);
+                        nextState(1120);
                     else
-                        GOTO(1110);
-                    continue;
+                        nextState(1110);
+                    break;
                 case 1110:
                     vArray[r][s] = 3;
-                    GOTO(1130);
-                    continue;
+                    nextState(1130);
+                    break;
                 case 1120:
                     vArray[r][s] = 1;
-                    GOTO(1130);
-                    continue;
+                    nextState(1130);
+                    break;
                 case 1130:
                     s++;
-                    if (c == v * h + 1)
-                        GOTO(1200);
+                    if (c == height * width + 1)
+                        nextState(1200);
                     else
-                        GOTO(1140);
-                    continue;
+                        nextState(1140);
+                    break;
                 case 1140:
-                    GOTO(270);
-                    continue;
+                    nextState(270);
+                    break;
                 case 1150:
                     z = 1;
-                    GOTO(1160);
-                    continue;
+                    nextState(1160);
+                    break;
                 case 1160:
                     if (vArray[r][s] == 0)
-                        GOTO(1180);
+                        nextState(1180);
                     else
-                        GOTO(1170);
-                    continue;
+                        nextState(1170);
+                    break;
                 case 1170:
                     vArray[r][s] = 3;
                     q = 0;
-                    GOTO(1190);
-                    continue;
+                    nextState(1190);
+                    break;
                 case 1180:
                     vArray[r][s] = 1;
                     q = 0;
                     r = 1;
                     s = 1;
-                    GOTO(260);
-                    continue;
+                    nextState(260);
+                    break;
                 case 1190:
-                    GOTO(210);
-                    continue;
-                case 1200:
-                    target = -1;
-                    continue;
+                    nextState(210);
+                    break;
+
             }
 
         }
+        
+        return vArray;
+	}
 
-        printMazeInnards(h, v, vArray);
-    }
+	private static int[][] constructBlankMaze1BasedArray(int width, int height) {
+		int[][] wArray = new int[width + 1][height + 1];
+        for (int i = 0; i <= width; i++) {
+            wArray[i] = new int[height + 1];
+        }
+		return wArray;
+	}
+
+	private static boolean tooSmall(int h, int v) {
+		return h <= 1 || v <= 1;
+	}
 
 	private static void printMazeInnards(int height, int width, int[][] maze) {
 		for (int j = 1; j <= width; j++) {
@@ -656,9 +669,9 @@ public class Amazing {
         }
 	}
 
-	private static void printSeparatorLine(int width, int[][] maze, int lastLineIndex) {
-		for (int i = 1; i <= width; i++) {
-		    if (maze[i][lastLineIndex] == 0 || maze[i][lastLineIndex] == 2) {
+	private static void printSeparatorLine(int width, int[][] maze, int row) {
+		for (int col = 1; col <= width; col++) {
+		    if (maze[col][row] == 0 || maze[col][row] == 2) {
 		        print(CLOSED_WALL);
 		    } else {
 		        print(OPENING);
