@@ -383,7 +383,7 @@ public class Amazing {
 
                 case 820:
                     if (z == 1)
-                        nextState(870);
+                        nextState(1020);
                     else
                         nextState(830);
                     break;
@@ -393,7 +393,7 @@ public class Amazing {
                     break;
                 case 840:
                     if (wArray[r][s + 1] != 0)
-                        nextState(870);
+                        nextState(1020);
                     else
                         nextState(850);
                     break;
@@ -404,10 +404,7 @@ public class Amazing {
                     else if (x == 2)
                         nextState(1090);
                     else
-                        nextState(870);
-                    break;
-                case 870:
-                    nextState(1020);
+                        nextState(1020);
                     break;
                 case 880:
                     if (s != height)
@@ -417,25 +414,19 @@ public class Amazing {
                     break;
                 case 890:
                     if (z == 1)
-                        nextState(930);
+                        nextState(1190);
                     else
                         nextState(900);
                     break;
                 case 900:
                     q = 1;
-                    nextState(920);
+                    nextState(1090);
                     break;
                 case 910:
                     if (wArray[r][s + 1] != 0)
-                        nextState(930);
+                        nextState(1190);
                     else
-                        nextState(920);
-                    break;
-                case 920:
-                    nextState(1090);
-                    break;
-                case 930:
-                    nextState(1190);
+                        nextState(1090);
                     break;
                 case END_OF_LOOP:
                     wArray[r - 1][s] = c;
@@ -456,53 +447,33 @@ public class Amazing {
                     break;
                 case 990:
                     c++;
-                    nextState(1000);
-                    break;
-                case 1000:
                     vArray[r][s - 1] = 1;
                     s--;
-                    if (c == endPointOfMaze)
+                    if (c == endPointOfMaze) {
                         nextState(1200);
-                    else
-                        nextState(1010);
-                    break;
-                case 1010:
-                    q = 0;
-                    // continue
-                    nextState(START_OF_LOOP);
+                    } else {
+                        q = 0;
+                        // continue
+                        nextState(START_OF_LOOP);
+                    }
                     break;
                 case 1020:
                     wArray[r + 1][s] = c;
-                    nextState(1030);
-                    break;
-                case 1030:
                     c++;
-                    if (vArray[r][s] == 0)
-                        nextState(1050);
-                    else
-                        nextState(1040);
-                    break;
-                case 1040:
-                    vArray[r][s] = 3;
-                    nextState(1060);
-                    break;
-                case 1050:
-                    vArray[r][s] = 2;
-                    nextState(1060);
-                    break;
-                case 1060:
+                    if (vArray[r][s] == 0) {
+                        vArray[r][s] = 2;
+                    } else {
+                        vArray[r][s] = 3;
+                    }
+
                     r++;
-                    nextState(1070);
-                    break;
-                case 1070:
+
                     if (c == endPointOfMaze)
                         nextState(1200);
                     else
-                        nextState(1080);
+                        nextState(600);
                     break;
-                case 1080:
-                    nextState(600);
-                    break;
+
                 case 1090:
                     if (q == 1)
                         nextState(1150);
