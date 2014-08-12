@@ -121,32 +121,30 @@ public class Amazing {
                     }
                     break;
                 case START_OF_LOOP:
-                    if (r - 1 == 0)
-                        nextState(600);
-                    else
-                        nextState(280);
-                    break;
-                case 280:
-                    if (wArray[r - 1][s] != 0) {
+                    if (r - 1 == 0) {
                         nextState(600);
                     } else {
-	                    if (s - 1 == 0) {
-	                        nextState(430);
-	                    } else {
-	                        if (wArray[r][s - 1] != 0) {
-	                            nextState(430);
-	                    	} else {
-	                            if (r == width) {
-	                                nextState(350);
-	                            } else {
-	                                if (wArray[r + 1][s] != 0) {
-	                                    nextState(350);
-	                                } else {
-	                                    nextState(330);
-	                                }
-	                            }
-	                        }
-	                    }
+                    	if (wArray[r - 1][s] != 0) {
+                            nextState(600);
+                        } else {
+    	                    if (s - 1 == 0) {
+    	                        nextState(430);
+    	                    } else {
+    	                        if (wArray[r][s - 1] != 0) {
+    	                            nextState(430);
+    	                    	} else {
+    	                            if (r == width) {
+    	                                nextState(350);
+    	                            } else {
+    	                                if (wArray[r + 1][s] != 0) {
+    	                                    nextState(350);
+    	                                } else {
+    	                                    nextState(330);
+    	                                }
+    	                            }
+    	                        }
+    	                    }
+                        }
                     }
                     break;
 
@@ -394,7 +392,10 @@ public class Amazing {
                     break;
                 case 880:
                     if (s != height) {
-                        nextState(910);
+                        if (wArray[r][s + 1] != 0)
+                            nextState(210);
+                        else
+                            nextState(1090);
                     } else {
                         if (z == 1) {
                             nextState(210);
@@ -405,12 +406,6 @@ public class Amazing {
                     }
                     break;
 
-                case 910:
-                    if (wArray[r][s + 1] != 0)
-                        nextState(210);
-                    else
-                        nextState(1090);
-                    break;
                 case END_OF_LOOP:
                     wArray[r - 1][s] = c;
                     c++;
@@ -460,7 +455,18 @@ public class Amazing {
 
                 case 1090:
                     if (q == 1) {
-                        nextState(1150);
+                        z = 1;
+                        if (vArray[r][s] == 0) {
+                            vArray[r][s] = 1;
+                            q = 0;
+                            r = 1;
+                            s = 1;
+                            nextState(260);
+                        } else {
+                            vArray[r][s] = 3;
+                            q = 0;
+                            nextState(210);
+                        }
                     } else {
                         wArray[r][s + 1] = c;
                         c++;
@@ -477,21 +483,6 @@ public class Amazing {
                         	// continue;
                             nextState(START_OF_LOOP);
                         }
-                    }
-                    break;
-
-                case 1150:
-                    z = 1;
-                    if (vArray[r][s] == 0) {
-                        vArray[r][s] = 1;
-                        q = 0;
-                        r = 1;
-                        s = 1;
-                        nextState(260);
-                    } else {
-                        vArray[r][s] = 3;
-                        q = 0;
-                        nextState(210);
                     }
                     break;
 
