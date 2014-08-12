@@ -263,9 +263,7 @@ public class Amazing {
                     break;
                 case 570:
                     x = generateRandom(2);
-                    if (x == 1)
-                        nextState(END_OF_LOOP);
-                    else if (x == 2)
+                    if (x == 2)
                         nextState(1090);
                     else
                         nextState(END_OF_LOOP);
@@ -343,9 +341,7 @@ public class Amazing {
                     break;
                 case 760:
                     x = generateRandom(2);
-                    if (x == 1)
-                        nextState(980);
-                    else if (x == 2)
+                    if (x == 2)
                         nextState(1090);
                     else
                         nextState(980);
