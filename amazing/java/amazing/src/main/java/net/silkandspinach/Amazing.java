@@ -161,20 +161,16 @@ public class Amazing {
                         nextState(350);
                     break;
                 case 350:
-                    if (s != height)
+                    if (s != height) {
                         nextState(380);
-                    else
-                        nextState(360);
-                    break;
-                case 360:
-                    if (z == 1)
-                        nextState(410);
-                    else
-                        nextState(370);
-                    break;
-                case 370:
-                    q = 1;
-                    nextState(390);
+                    } else {
+                        if (z == 1) {
+                            nextState(410);
+                        } else {
+                            q = 1;
+                            nextState(390);
+                        }
+                    }
                     break;
                 case 380:
                     if (wArray[r][s + 1] != 0)
@@ -184,9 +180,6 @@ public class Amazing {
                     break;
                 case 390:
                     x = generateRandomMazeElement();
-                    nextState(400);
-                    break;
-                case 400:
                     if (x == 1)
                         nextState(END_OF_LOOP);
                     else if (x == 2)
@@ -198,9 +191,6 @@ public class Amazing {
                     break;
                 case 410:
                     x = generateRandom(2);
-                    nextState(420);
-                    break;
-                case 420:
                     if (x == 1)
                         nextState(END_OF_LOOP);
                     else if (x == 2)
@@ -221,16 +211,14 @@ public class Amazing {
                         nextState(450);
                     break;
                 case 450:
-                    if (s != height)
+                    if (s != height) {
                         nextState(480);
-                    else
-                        nextState(460);
-                    break;
-                case 460:
-                    if (z == 1)
-                        nextState(510);
-                    else
-                        nextState(470);
+                    } else {
+                        if (z == 1)
+                            nextState(510);
+                        else
+                            nextState(470);
+                    }
                     break;
                 case 470:
                     q = 1;
@@ -244,9 +232,6 @@ public class Amazing {
                     break;
                 case 490:
                     x = generateRandomMazeElement();
-                    nextState(500);
-                    break;
-                case 500:
                     if (x == 1)
                         nextState(END_OF_LOOP);
                     else if (x == 2)
@@ -258,9 +243,6 @@ public class Amazing {
                     break;
                 case 510:
                     x = generateRandom(2);
-                    nextState(520);
-                    break;
-                case 520:
                     if (x == 1)
                         nextState(END_OF_LOOP);
                     else if (x == 2)
@@ -276,7 +258,7 @@ public class Amazing {
                     break;
                 case 540:
                     if (z == 1)
-                        nextState(590);
+                        nextState(END_OF_LOOP);
                     else
                         nextState(550);
                     break;
@@ -286,61 +268,50 @@ public class Amazing {
                     break;
                 case 560:
                     if (wArray[r][s + 1] != 0)
-                        nextState(590);
+                        nextState(END_OF_LOOP);
                     else
                         nextState(570);
                     break;
                 case 570:
                     x = generateRandom(2);
-                    nextState(580);
-                    break;
-                case 580:
                     if (x == 1)
                         nextState(END_OF_LOOP);
                     else if (x == 2)
                         nextState(1090);
                     else
-                        nextState(590);
-                    break;
-                case 590:
-                    nextState(END_OF_LOOP);
+                        nextState(END_OF_LOOP);
                     break;
                 case 600:
-                    if (s - 1 == 0)
+                    if (s - 1 == 0) {
                         nextState(790);
-                    else
-                        nextState(610);
-                    break;
-                case 610:
-                    if (wArray[r][s - 1] != 0)
-                        nextState(790);
-                    else
-                        nextState(620);
+                    } else {
+	                    if (wArray[r][s - 1] != 0)
+	                        nextState(790);
+	                    else
+	                        nextState(620);
+                    }
                     break;
                 case 620:
-                    if (r == width)
+                    if (r == width) {
                         nextState(720);
-                    else
-                        nextState(630);
-                    break;
-                case 630:
-                    if (wArray[r + 1][s] != 0)
-                        nextState(720);
-                    else
-                        nextState(640);
+                    } else {
+                        if (wArray[r + 1][s] != 0)
+                            nextState(720);
+                        else
+                            nextState(640);
+                    }
                     break;
                 case 640:
-                    if (s != height)
+                    if (s != height) {
                         nextState(670);
-                    else
-                        nextState(650);
+                    } else {
+                        if (z == 1)
+                            nextState(700);
+                        else
+                            nextState(660);
+                    }
                     break;
-                case 650:
-                    if (z == 1)
-                        nextState(700);
-                    else
-                        nextState(660);
-                    break;
+
                 case 660:
                     q = 1;
                     nextState(680);
@@ -353,9 +324,6 @@ public class Amazing {
                     break;
                 case 680:
                     x = generateRandomMazeElement();
-                    nextState(690);
-                    break;
-                case 690:
                     if (x == 1)
                         nextState(980);
                     else if (x == 2)
@@ -375,60 +343,44 @@ public class Amazing {
                         nextState(720);
                     break;
                 case 720:
-                    if (s != height)
-                        nextState(750);
-                    else
-                        nextState(730);
-                    break;
-                case 730:
-                    if (z == 1)
-                        nextState(780);
-                    else
-                        nextState(740);
-                    break;
-                case 740:
-                    q = 1;
-                    nextState(760);
-                    break;
-                case 750:
-                    if (wArray[r][s + 1] != 0)
-                        nextState(780);
-                    else
-                        nextState(760);
+                    if (s != height) {
+                        if (wArray[r][s + 1] != 0)
+                            nextState(980);
+                        else
+                            nextState(760);
+                    } else {
+                        if (z == 1) {
+                            nextState(980);
+                        } else {
+                            q = 1;
+                            nextState(760);
+                        }
+                    }
                     break;
                 case 760:
                     x = generateRandom(2);
-                    nextState(770);
-                    break;
-                case 770:
                     if (x == 1)
                         nextState(980);
                     else if (x == 2)
                         nextState(1090);
                     else
-                        nextState(780);
-                    break;
-                case 780:
-                    nextState(980);
+                        nextState(980);
                     break;
                 case 790:
-                    if (r == width)
+                    if (r == width) {
                         nextState(880);
-                    else
-                        nextState(800);
+                    } else {
+                        if (wArray[r + 1][s] != 0) {
+                            nextState(880);
+                        } else {
+                            if (s != height)
+                                nextState(840);
+                            else
+                                nextState(820);
+                        }
+                    }
                     break;
-                case 800:
-                    if (wArray[r + 1][s] != 0)
-                        nextState(880);
-                    else
-                        nextState(810);
-                    break;
-                case 810:
-                    if (s != height)
-                        nextState(840);
-                    else
-                        nextState(820);
-                    break;
+
                 case 820:
                     if (z == 1)
                         nextState(870);
@@ -447,9 +399,6 @@ public class Amazing {
                     break;
                 case 850:
                     x = generateRandom(2);
-                    nextState(860);
-                    break;
-                case 860:
                     if (x == 1)
                         nextState(1020);
                     else if (x == 2)
