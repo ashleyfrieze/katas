@@ -162,7 +162,10 @@ public class Amazing {
                     break;
                 case 350:
                     if (s != height) {
-                        nextState(380);
+                        if (wArray[r][s + 1] != 0)
+                            nextState(410);
+                        else
+                            nextState(390);
                     } else {
                         if (z == 1) {
                             nextState(410);
@@ -172,12 +175,7 @@ public class Amazing {
                         }
                     }
                     break;
-                case 380:
-                    if (wArray[r][s + 1] != 0)
-                        nextState(410);
-                    else
-                        nextState(390);
-                    break;
+
                 case 390:
                     x = generateRandomMazeElement();
                     if (x == 1)
@@ -209,7 +207,10 @@ public class Amazing {
                         nextState(530);
                     } else {
                         if (s != height) {
-                            nextState(480);
+                            if (wArray[r][s + 1] != 0)
+                                nextState(510);
+                            else
+                                nextState(490);
                         } else {
                             if (z == 1) {
                                 nextState(510);
@@ -219,12 +220,6 @@ public class Amazing {
                             }
                         }
                     }
-                    break;
-                case 480:
-                    if (wArray[r][s + 1] != 0)
-                        nextState(510);
-                    else
-                        nextState(490);
                     break;
                 case 490:
                     x = generateRandomMazeElement();
@@ -346,6 +341,7 @@ public class Amazing {
                     else
                         nextState(980);
                     break;
+                    
                 case 790:
                     if (r == width) {
                         nextState(880);
@@ -353,30 +349,23 @@ public class Amazing {
                         if (wArray[r + 1][s] != 0) {
                             nextState(880);
                         } else {
-                            if (s != height)
-                                nextState(840);
-                            else
-                                nextState(820);
+                            if (s != height) {
+                                if (wArray[r][s + 1] != 0)
+                                    nextState(1020);
+                                else
+                                    nextState(850);
+                            } else {
+                                if (z == 1) {
+                                    nextState(1020);
+                                } else {
+                                    q = 1;
+                                    nextState(990);
+                                }
+                            }
                         }
                     }
                     break;
 
-                case 820:
-                    if (z == 1)
-                        nextState(1020);
-                    else
-                        nextState(830);
-                    break;
-                case 830:
-                    q = 1;
-                    nextState(990);
-                    break;
-                case 840:
-                    if (wArray[r][s + 1] != 0)
-                        nextState(1020);
-                    else
-                        nextState(850);
-                    break;
                 case 850:
                     x = generateRandom(2);
                     if (x == 1)
