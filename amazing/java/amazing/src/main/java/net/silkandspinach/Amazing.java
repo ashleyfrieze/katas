@@ -414,7 +414,7 @@ public class Amazing {
                     break;
                 case 890:
                     if (z == 1)
-                        nextState(1190);
+                        nextState(210);
                     else
                         nextState(900);
                     break;
@@ -424,7 +424,7 @@ public class Amazing {
                     break;
                 case 910:
                     if (wArray[r][s + 1] != 0)
-                        nextState(1190);
+                        nextState(210);
                     else
                         nextState(1090);
                     break;
@@ -475,19 +475,18 @@ public class Amazing {
                     break;
 
                 case 1090:
-                    if (q == 1)
+                    if (q == 1) {
                         nextState(1150);
-                    else
-                        nextState(1100);
+                    } else {
+                        wArray[r][s + 1] = c;
+                        c++;
+                        if (vArray[r][s] == 0)
+                            nextState(1120);
+                        else
+                            nextState(1110);
+                    }
                     break;
-                case 1100:
-                    wArray[r][s + 1] = c;
-                    c++;
-                    if (vArray[r][s] == 0)
-                        nextState(1120);
-                    else
-                        nextState(1110);
-                    break;
+
                 case 1110:
                     vArray[r][s] = 3;
                     nextState(1130);
@@ -507,29 +506,21 @@ public class Amazing {
                     break;
                 case 1150:
                     z = 1;
-                    nextState(1160);
+                    if (vArray[r][s] == 0) {
+                        vArray[r][s] = 1;
+                        q = 0;
+                        r = 1;
+                        s = 1;
+                        nextState(260);
+                    } else {
+                        vArray[r][s] = 3;
+                        q = 0;
+                        nextState(210);
+                    }
                     break;
-                case 1160:
-                    if (vArray[r][s] == 0)
-                        nextState(1180);
-                    else
-                        nextState(1170);
-                    break;
-                case 1170:
-                    vArray[r][s] = 3;
-                    q = 0;
-                    nextState(1190);
-                    break;
-                case 1180:
-                    vArray[r][s] = 1;
-                    q = 0;
-                    r = 1;
-                    s = 1;
-                    nextState(260);
-                    break;
-                case 1190:
-                    nextState(210);
-                    break;
+
+                default:
+                	throw new RuntimeException("Unknown next state " + nextState);
 
             }
 
