@@ -11,7 +11,7 @@ package net.silkandspinach;
 import java.util.Random;
 
 public class Amazing {
-    private static final int STATE_FINISHED = 1200;
+
 	private static final String GAP_THEN_BORDER = "  I";
 	private static final String GAP = "   ";
 	private static final String LEFT_BORDER = "I";
@@ -22,8 +22,10 @@ public class Amazing {
     private static Random random = new Random(0);
     private static StringBuffer result = new StringBuffer();
 
+    // STATES
     private static final int END_OF_LOOP = 940;
     private static final int START_OF_LOOP = 270;
+    private static final int STATE_FINISHED = 1200;
     
     public static String buildMaze(Random randomGenerator, int horizontal, int vertical) {
     	random = randomGenerator;
@@ -205,24 +207,20 @@ public class Amazing {
                         nextState(440);
                     break;
                 case 440:
-                    if (wArray[r + 1][s] != 0)
+                    if (wArray[r + 1][s] != 0) {
                         nextState(530);
-                    else
-                        nextState(450);
-                    break;
-                case 450:
-                    if (s != height) {
-                        nextState(480);
                     } else {
-                        if (z == 1)
-                            nextState(510);
-                        else
-                            nextState(470);
+                        if (s != height) {
+                            nextState(480);
+                        } else {
+                            if (z == 1) {
+                                nextState(510);
+                            } else {
+                                q = 1;
+                                nextState(490);
+                            }
+                        }
                     }
-                    break;
-                case 470:
-                    q = 1;
-                    nextState(490);
                     break;
                 case 480:
                     if (wArray[r][s + 1] != 0)
@@ -251,26 +249,19 @@ public class Amazing {
                         nextState(530);
                     break;
                 case 530:
-                    if (s != height)
-                        nextState(560);
-                    else
-                        nextState(540);
-                    break;
-                case 540:
-                    if (z == 1)
-                        nextState(END_OF_LOOP);
-                    else
-                        nextState(550);
-                    break;
-                case 550:
-                    q = 1;
-                    nextState(570);
-                    break;
-                case 560:
-                    if (wArray[r][s + 1] != 0)
-                        nextState(END_OF_LOOP);
-                    else
-                        nextState(570);
+                    if (s != height) {
+                        if (wArray[r][s + 1] != 0)
+                            nextState(END_OF_LOOP);
+                        else
+                            nextState(570);
+                    } else {
+                        if (z == 1) {
+                            nextState(END_OF_LOOP);
+                        } else {
+                            q = 1;
+                            nextState(570);
+                        }
+                    }
                     break;
                 case 570:
                     x = generateRandom(2);
@@ -295,26 +286,21 @@ public class Amazing {
                     if (r == width) {
                         nextState(720);
                     } else {
-                        if (wArray[r + 1][s] != 0)
+                        if (wArray[r + 1][s] != 0) {
                             nextState(720);
-                        else
-                            nextState(640);
+                        } else {
+                            if (s != height) {
+                                nextState(670);
+                            } else {
+                                if (z == 1) {
+                                    nextState(700);
+                                } else {
+                                    q = 1;
+                                    nextState(680);
+                                }
+                            }
+                        }
                     }
-                    break;
-                case 640:
-                    if (s != height) {
-                        nextState(670);
-                    } else {
-                        if (z == 1)
-                            nextState(700);
-                        else
-                            nextState(660);
-                    }
-                    break;
-
-                case 660:
-                    q = 1;
-                    nextState(680);
                     break;
                 case 670:
                     if (wArray[r][s + 1] != 0)
@@ -407,21 +393,18 @@ public class Amazing {
                         nextState(1020);
                     break;
                 case 880:
-                    if (s != height)
+                    if (s != height) {
                         nextState(910);
-                    else
-                        nextState(890);
+                    } else {
+                        if (z == 1) {
+                            nextState(210);
+                        } else {
+                            q = 1;
+                            nextState(1090);
+                        }
+                    }
                     break;
-                case 890:
-                    if (z == 1)
-                        nextState(210);
-                    else
-                        nextState(900);
-                    break;
-                case 900:
-                    q = 1;
-                    nextState(1090);
-                    break;
+
                 case 910:
                     if (wArray[r][s + 1] != 0)
                         nextState(210);
@@ -450,7 +433,7 @@ public class Amazing {
                     vArray[r][s - 1] = 1;
                     s--;
                     if (c == endPointOfMaze) {
-                        nextState(1200);
+                        nextState(STATE_FINISHED);
                     } else {
                         q = 0;
                         // continue
@@ -460,6 +443,7 @@ public class Amazing {
                 case 1020:
                     wArray[r + 1][s] = c;
                     c++;
+                    
                     if (vArray[r][s] == 0) {
                         vArray[r][s] = 2;
                     } else {
@@ -469,7 +453,7 @@ public class Amazing {
                     r++;
 
                     if (c == endPointOfMaze)
-                        nextState(1200);
+                        nextState(STATE_FINISHED);
                     else
                         nextState(600);
                     break;
@@ -480,30 +464,22 @@ public class Amazing {
                     } else {
                         wArray[r][s + 1] = c;
                         c++;
-                        if (vArray[r][s] == 0)
-                            nextState(1120);
-                        else
-                            nextState(1110);
+                        if (vArray[r][s] == 0) {
+                            vArray[r][s] = 1;
+                        } else {
+                            vArray[r][s] = 3;
+                        }
+                        
+                        s++;
+                        if (c == endPointOfMaze) {
+                            nextState(STATE_FINISHED);
+                        } else {
+                        	// continue;
+                            nextState(START_OF_LOOP);
+                        }
                     }
                     break;
 
-                case 1110:
-                    vArray[r][s] = 3;
-                    nextState(1130);
-                    break;
-                case 1120:
-                    vArray[r][s] = 1;
-                    nextState(1130);
-                    break;
-                case 1130:
-                    s++;
-                    if (c == endPointOfMaze) {
-                        nextState(1200);
-                    } else {
-                    	// continue;
-                        nextState(START_OF_LOOP);
-                    }
-                    break;
                 case 1150:
                     z = 1;
                     if (vArray[r][s] == 0) {
