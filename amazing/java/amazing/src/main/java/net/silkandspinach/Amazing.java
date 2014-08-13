@@ -86,7 +86,7 @@ public class Amazing {
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
 	                    else if (x == 2)
-	                        nextState(980);
+	                    	writeCintoWarrayAndProceed();
 	                    else if (x == 3)
 	                        nextState(1020);
 	                    else
@@ -114,7 +114,7 @@ public class Amazing {
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
 	                    else if (x == 2)
-	                        nextState(980);
+	                    	writeCintoWarrayAndProceed();
 	                    else if (x == 3)
 	                        nextState(1090);
 	                    else
@@ -231,7 +231,7 @@ public class Amazing {
 	                case 680: {
 	                    int x = generateRandomMazeElement();
 	                    if (x == 1)
-	                        nextState(980);
+	                    	writeCintoWarrayAndProceed();
 	                    else if (x == 2)
 	                        nextState(1020);
 	                    else if (x == 3)
@@ -243,7 +243,7 @@ public class Amazing {
 	                case 700: {
 	                    int x = generateRandom(2);
 	                    if (x == 1)
-	                        nextState(980);
+	                    	writeCintoWarrayAndProceed();
 	                    else if (x == 2)
 	                        nextState(1020);
 	                    else
@@ -253,12 +253,12 @@ public class Amazing {
 	                case 720:
 	                    if (s != height) {
 	                        if (wArray[r][s + 1] != 0)
-	                            nextState(980);
+	                        	writeCintoWarrayAndProceed();
 	                        else
 	                            nextState(760);
 	                    } else {
 	                        if (z == 1) {
-	                            nextState(980);
+	                        	writeCintoWarrayAndProceed();
 	                        } else {
 	                            q = 1;
 	                            nextState(760);
@@ -270,7 +270,7 @@ public class Amazing {
 	                    if (x == 2)
 	                        nextState(1090);
 	                    else
-	                        nextState(980);
+	                    	writeCintoWarrayAndProceed();
 	                    break;
 	                }
 	                case 790:
@@ -299,7 +299,7 @@ public class Amazing {
                                     nextState(1020);
                                 } else {
                                     q = 1;
-                                    nextState(990);
+                                    incrementCstore1inMazeAndDecideIfToFinish();
                                 }
                             }
 	                        
@@ -307,8 +307,7 @@ public class Amazing {
 	                    break;
 	
 	                case END_OF_LOOP:
-	                    wArray[r - 1][s] = c;
-	                    c++;
+						storeCinWarrayRmin1SAndIncrementC();
 	                    vArray[r - 1][s] = 2;
 	                    r--;
 	                    if (c == endPointOfMaze) {
@@ -319,25 +318,8 @@ public class Amazing {
 		        	        startLooping();
 	                    }
 	                    break;
-	                case 980:
-	                    wArray[r][s - 1] = c;
-	                    nextState(990);
-	                    break;
-	                case 990:
-	                    c++;
-	                    vArray[r][s - 1] = 1;
-	                    s--;
-	                    if (c == endPointOfMaze) {
-	                        nextState(STATE_FINISHED);
-	                    } else {
-	                        q = 0;
-	                        // continue
-	            	        startLooping();
-	                    }
-	                    break;
 	                case 1020:
-	                    wArray[r + 1][s] = c;
-	                    c++;
+						storeCinWarrayRpls1SandIncrementC();
 	                    
 	                    if (vArray[r][s] == 0) {
 	                        vArray[r][s] = 2;
@@ -368,8 +350,7 @@ public class Amazing {
 	                            incrementRandSandProgress();
 	                        }
 	                    } else {
-	                        wArray[r][s + 1] = c;
-	                        c++;
+	                        storeCinWarrayRSpls1andIncrementC();
 	                        if (vArray[r][s] == 0) {
 	                            vArray[r][s] = 1;
 	                        } else {
@@ -396,12 +377,50 @@ public class Amazing {
 	        return vArray;
 	    }
 
+
+		private void storeCinWarrayRSpls1andIncrementC() {
+			wArray[r][s + 1] = c;
+			c++;
+		}
+
+
+		private void storeCinWarrayRpls1SandIncrementC() {
+			wArray[r + 1][s] = c;
+			c++;
+		}
+
+
+		private void storeCinWarrayRmin1SAndIncrementC() {
+			wArray[r - 1][s] = c;
+			c++;
+		}
+
+
+		private void incrementCstore1inMazeAndDecideIfToFinish() {
+			c++;
+			vArray[r][s - 1] = 1;
+			s--;
+			if (c == endPointOfMaze) {
+			    nextState(STATE_FINISHED);
+			} else {
+			    q = 0;
+			    // continue
+			    startLooping();
+			}
+		}
+
+
+		private void writeCintoWarrayAndProceed() {
+			wArray[r][s - 1] = c;
+			incrementCstore1inMazeAndDecideIfToFinish();
+		}
+
 		private void decisionPoint410() {
 			int x = generateRandom(2);
 			if (x == 1)
 			    nextState(END_OF_LOOP);
 			else if (x == 2)
-			    nextState(980);
+				writeCintoWarrayAndProceed();
 			else
 			    nextState(430);
 		}
