@@ -18,16 +18,17 @@ public class Amazing {
 	private static final String CLOSED_WALL = ":--";
 	private static final String OPENING = ":  ";
 	private static final String RIGHT_WALL = ":";
-	private static int nextState = 0;      // where GOTO goes
+
     private static Random random = new Random(0);
     private static StringBuffer result = new StringBuffer();
 
     // STATES
     private static final int END_OF_LOOP = 940;
-    private static final int START_OF_LOOP = 270;
     private static final int STATE_FINISHED = 1200;
     
     static class MazeGenerator {
+    	private static int nextState = 0;      // where GOTO goes
+    	
     	private int[][] wArray;
     	private int[][] vArray;
     	final int endPointOfMaze;
@@ -39,7 +40,6 @@ public class Amazing {
 
         int r;
         int s;
-        int x;
         
         int width;
         int height;
@@ -62,67 +62,26 @@ public class Amazing {
 	
 	        r = entrance;
 	        s = 1;
-	        x = entrance;
-	        nextState(START_OF_LOOP);
+
     	}
 
         
         int[][] generate() {
+	        startLooping();
 	        while (nextState != STATE_FINISHED) {
 	
 				switch (nextState) {
-	                case 210:
-	                    if (r != width) {
-	                    	r++;
-	                    } else {
-	                        r = 1;
-		                    if (s != height) {
-		                        s++;
-		                    } else {
-		                        s = 1;
-		                    }
-	                    }
-	                    nextState(260);
-	                    break;
-	
 	                case 260:
 	                    if (wArray[r][s] == 0) {
-	                        nextState(210);
+	                    	incrementRandSandProgress();
 	                    } else {
 	                        // continue
-	                    	nextState(START_OF_LOOP);
-	                    }
-	                    break;
-	                case START_OF_LOOP:
-	                    if (r - 1 == 0) {
-	                        nextState(600);
-	                    } else {
-	                    	if (wArray[r - 1][s] != 0) {
-	                            nextState(600);
-	                        } else {
-	    	                    if (s - 1 == 0) {
-	    	                        nextState(430);
-	    	                    } else {
-	    	                        if (wArray[r][s - 1] != 0) {
-	    	                            nextState(430);
-	    	                    	} else {
-	    	                            if (r == width) {
-	    	                                nextState(350);
-	    	                            } else {
-	    	                                if (wArray[r + 1][s] != 0) {
-	    	                                    nextState(350);
-	    	                                } else {
-	    	                                    nextState(330);
-	    	                                }
-	    	                            }
-	    	                        }
-	    	                    }
-	                        }
+	            	        startLooping();
 	                    }
 	                    break;
 	
-	                case 330:
-	                    x = generateRandomMazeElement();
+	                case 330: {
+	                    int x = generateRandomMazeElement();
 	
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
@@ -133,15 +92,16 @@ public class Amazing {
 	                    else
 	                        nextState(350);
 	                    break;
+	                }
 	                case 350:
 	                    if (s != height) {
 	                        if (wArray[r][s + 1] != 0)
-	                            nextState(410);
+	                        	decisionPoint410();
 	                        else
 	                            nextState(390);
 	                    } else {
 	                        if (z == 1) {
-	                            nextState(410);
+	                        	decisionPoint410();
 	                        } else {
 	                            q = 1;
 	                            nextState(390);
@@ -149,8 +109,8 @@ public class Amazing {
 	                    }
 	                    break;
 	
-	                case 390:
-	                    x = generateRandomMazeElement();
+	                case 390: {
+	                    int x = generateRandomMazeElement();
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
 	                    else if (x == 2)
@@ -158,17 +118,10 @@ public class Amazing {
 	                    else if (x == 3)
 	                        nextState(1090);
 	                    else
-	                        nextState(410);
+	                    	decisionPoint410();
 	                    break;
-	                case 410:
-	                    x = generateRandom(2);
-	                    if (x == 1)
-	                        nextState(END_OF_LOOP);
-	                    else if (x == 2)
-	                        nextState(980);
-	                    else
-	                        nextState(430);
-	                    break;
+	                }
+
 	                case 430:
 	                    if (r == width)
 	                        nextState(530);
@@ -194,8 +147,8 @@ public class Amazing {
 	                        }
 	                    }
 	                    break;
-	                case 490:
-	                    x = generateRandomMazeElement();
+	                case 490: {
+	                    int x = generateRandomMazeElement();
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
 	                    else if (x == 2)
@@ -205,8 +158,9 @@ public class Amazing {
 	                    else
 	                        nextState(510);
 	                    break;
-	                case 510:
-	                    x = generateRandom(2);
+	                }
+	                case 510: {
+	                    int x = generateRandom(2);
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
 	                    else if (x == 2)
@@ -214,6 +168,7 @@ public class Amazing {
 	                    else
 	                        nextState(530);
 	                    break;
+	                }
 	                case 530:
 	                    if (s != height) {
 	                        if (wArray[r][s + 1] != 0)
@@ -229,13 +184,14 @@ public class Amazing {
 	                        }
 	                    }
 	                    break;
-	                case 570:
-	                    x = generateRandom(2);
+	                case 570: {
+	                    int x = generateRandom(2);
 	                    if (x == 2)
 	                        nextState(1090);
 	                    else
 	                        nextState(END_OF_LOOP);
 	                    break;
+	                }
 	                case 600:
 	                    if (s - 1 == 0) {
 	                        nextState(790);
@@ -272,8 +228,8 @@ public class Amazing {
 	                    else
 	                        nextState(680);
 	                    break;
-	                case 680:
-	                    x = generateRandomMazeElement();
+	                case 680: {
+	                    int x = generateRandomMazeElement();
 	                    if (x == 1)
 	                        nextState(980);
 	                    else if (x == 2)
@@ -283,8 +239,9 @@ public class Amazing {
 	                    else
 	                        nextState(700);
 	                    break;
-	                case 700:
-	                    x = generateRandom(2);
+	                }
+	                case 700: {
+	                    int x = generateRandom(2);
 	                    if (x == 1)
 	                        nextState(980);
 	                    else if (x == 2)
@@ -292,6 +249,7 @@ public class Amazing {
 	                    else
 	                        nextState(720);
 	                    break;
+	                }
 	                case 720:
 	                    if (s != height) {
 	                        if (wArray[r][s + 1] != 0)
@@ -307,60 +265,44 @@ public class Amazing {
 	                        }
 	                    }
 	                    break;
-	                case 760:
-	                    x = generateRandom(2);
+	                case 760: {
+	                    int x = generateRandom(2);
 	                    if (x == 2)
 	                        nextState(1090);
 	                    else
 	                        nextState(980);
 	                    break;
-	                    
+	                }
 	                case 790:
-	                    if (r == width) {
-	                        nextState(880);
+	                    if (r == width || wArray[r + 1][s] != 0) {
+	                    	if (s != height) {
+							    if (wArray[r][s + 1] != 0)
+							    	incrementRandSandProgress();
+							    else
+							        nextState(1090);
+							} else {
+							    if (z == 1) {
+							    	incrementRandSandProgress();
+							    } else {
+							        q = 1;
+							        nextState(1090);
+							    }
+							}
 	                    } else {
-	                        if (wArray[r + 1][s] != 0) {
-	                            nextState(880);
-	                        } else {
-	                            if (s != height) {
-	                                if (wArray[r][s + 1] != 0)
-	                                    nextState(1020);
-	                                else
-	                                    nextState(850);
-	                            } else {
-	                                if (z == 1) {
-	                                    nextState(1020);
-	                                } else {
-	                                    q = 1;
-	                                    nextState(990);
-	                                }
-	                            }
-	                        }
-	                    }
-	                    break;
-	
-	                case 850:
-	                    x = generateRandom(2);
-	                    if (x == 1)
-	                        nextState(1020);
-	                    else if (x == 2)
-	                        nextState(1090);
-	                    else
-	                        nextState(1020);
-	                    break;
-	                case 880:
-	                    if (s != height) {
-	                        if (wArray[r][s + 1] != 0)
-	                            nextState(210);
-	                        else
-	                            nextState(1090);
-	                    } else {
-	                        if (z == 1) {
-	                            nextState(210);
-	                        } else {
-	                            q = 1;
-	                            nextState(1090);
-	                        }
+                            if (s != height) {
+                                if (wArray[r][s + 1] != 0)
+                                    nextState(1020);
+                                else
+            	                    decisionPoint850();
+                            } else {
+                                if (z == 1) {
+                                    nextState(1020);
+                                } else {
+                                    q = 1;
+                                    nextState(990);
+                                }
+                            }
+	                        
 	                    }
 	                    break;
 	
@@ -374,7 +316,7 @@ public class Amazing {
 	                    } else {
 		                    q = 0;
 		                    // continue
-		                    nextState(START_OF_LOOP);
+		        	        startLooping();
 	                    }
 	                    break;
 	                case 980:
@@ -390,7 +332,7 @@ public class Amazing {
 	                    } else {
 	                        q = 0;
 	                        // continue
-	                        nextState(START_OF_LOOP);
+	            	        startLooping();
 	                    }
 	                    break;
 	                case 1020:
@@ -423,7 +365,7 @@ public class Amazing {
 	                        } else {
 	                            vArray[r][s] = 3;
 	                            q = 0;
-	                            nextState(210);
+	                            incrementRandSandProgress();
 	                        }
 	                    } else {
 	                        wArray[r][s + 1] = c;
@@ -439,7 +381,7 @@ public class Amazing {
 	                            nextState(STATE_FINISHED);
 	                        } else {
 	                        	// continue;
-	                            nextState(START_OF_LOOP);
+	                	        startLooping();
 	                        }
 	                    }
 	                    break;
@@ -452,6 +394,62 @@ public class Amazing {
 	        }
 	        
 	        return vArray;
+	    }
+
+		private void decisionPoint410() {
+			int x = generateRandom(2);
+			if (x == 1)
+			    nextState(END_OF_LOOP);
+			else if (x == 2)
+			    nextState(980);
+			else
+			    nextState(430);
+		}
+
+		private void startLooping() {
+			if (r - 1 == 0 || wArray[r - 1][s] != 0) {
+			    nextState(600);
+			} else {
+		        if (s - 1 == 0 || wArray[r][s - 1] != 0) {
+		            nextState(430);
+		        } else {
+	                if (r == width || wArray[r + 1][s] != 0) {
+	                    nextState(350);
+	                } else {
+                        nextState(330);
+	                }
+			    }
+			}
+		}
+
+
+		private void incrementRandSandProgress() {
+			if (r != width) {
+				r++;
+			} else {
+			    r = 1;
+			    if (s != height) {
+			        s++;
+			    } else {
+			        s = 1;
+			    }
+			}
+			nextState(260);
+		}
+
+
+		private void decisionPoint850() {
+			int x = generateRandom(2);
+			if (x == 1)
+			    nextState(1020);
+			else if (x == 2)
+			    nextState(1090);
+			else
+			    nextState(1020);
+		}
+		
+	    public static void nextState(int lineno) {
+	        nextState = lineno;
 	    }
     }
     
@@ -480,10 +478,6 @@ public class Amazing {
 
     public static int generateRandom(int count) {
         return (int) (count * random.nextFloat()) + 1;
-    }
-
-    public static void nextState(int lineno) {
-        nextState = lineno;
     }
 
     private static void doit(int width, int height) {
