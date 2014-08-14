@@ -77,7 +77,7 @@ public class Amazing {
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
 	                    else if (x == 2)
-	                    	writeCintoWarrayAndProceed();
+	                    	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 	                    else if (x == 3)
 	                        nextState(1020);
 	                    else
@@ -86,7 +86,7 @@ public class Amazing {
 	                }
 	                case 350:
 	                    if (notOnLastRow()) {
-	                        if (isWarrayOccupiedBelowCurrentPosition())
+	                        if (isWarrayCellBelowOccupied())
 	                        	decisionPoint410();
 	                        else
 	                            nextState(390);
@@ -105,7 +105,7 @@ public class Amazing {
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
 	                    else if (x == 2)
-	                    	writeCintoWarrayAndProceed();
+	                    	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 	                    else if (x == 3)
 	                        nextState(1090);
 	                    else
@@ -114,17 +114,17 @@ public class Amazing {
 	                }
 
 	                case 430:
-	                    if (currentColumn == width)
+	                    if (onLastColumn())
 	                        nextState(530);
 	                    else
 	                        nextState(440);
 	                    break;
 	                case 440:
-	                    if (wArray[currentColumn + 1][currentRow] != 0) {
+	                    if (isWarrayCellToRightOccupied()) {
 	                        nextState(530);
 	                    } else {
 	                        if (notOnLastRow()) {
-	                            if (isWarrayOccupiedBelowCurrentPosition())
+	                            if (isWarrayCellBelowOccupied())
 	                                nextState(510);
 	                            else
 	                                nextState(490);
@@ -162,7 +162,7 @@ public class Amazing {
 	                }
 	                case 530:
 	                    if (notOnLastRow()) {
-	                        if (isWarrayOccupiedBelowCurrentPosition())
+	                        if (isWarrayCellBelowOccupied())
 	                            nextState(END_OF_LOOP);
 	                        else
 	                        	do1090orEndLoop();
@@ -177,14 +177,14 @@ public class Amazing {
 	                    break;
 
 	                case 600:
-	                    if (currentRow - 1 == 0 || wArray[currentColumn][currentRow - 1] != 0) {
+	                    if (onFirstRow() || isWarrayCellAboveOccupied()) {
 	                        nextState(790);
 	                    } else {
-		                    if (currentColumn == width || wArray[currentColumn + 1][currentRow] != 0) {
+		                    if (onLastColumn() || isWarrayCellToRightOccupied()) {
 		                        nextState(720);
 		                    } else {
 	                            if (notOnLastRow()) {
-	        	                    if (isWarrayOccupiedBelowCurrentPosition())
+	        	                    if (isWarrayCellBelowOccupied())
 	        	                    	decisionPoint700();
 	        	                    else
 	        	                        nextState(680);
@@ -203,7 +203,7 @@ public class Amazing {
 	                case 680: {
 	                    int x = generateRandom(3);
 	                    if (x == 1)
-	                    	writeCintoWarrayAndProceed();
+	                    	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 	                    else if (x == 2)
 	                        nextState(1020);
 	                    else if (x == 3)
@@ -214,14 +214,14 @@ public class Amazing {
 	                }
 	                case 720:
 	                    if (notOnLastRow()) {
-	                        if (isWarrayOccupiedBelowCurrentPosition()) {
-	                        	writeCintoWarrayAndProceed();
+	                        if (isWarrayCellBelowOccupied()) {
+	                        	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 	                        } else {
 	                        	do1090orWriteCintoWarrayAndProceed();
 	                        }
 	                    } else {
 	                        if (someOtherDecision) {
-	                        	writeCintoWarrayAndProceed();
+	                        	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 	                        } else {
 	                            someDecision = true;
 	                            do1090orWriteCintoWarrayAndProceed();
@@ -229,15 +229,15 @@ public class Amazing {
 	                    }
 	                    break;
 	                case 790:
-	                    if (currentColumn == width || wArray[currentColumn + 1][currentRow] != 0) {
+	                    if (onLastColumn() || isWarrayCellToRightOccupied()) {
 	                    	if (notOnLastRow()) {
-							    if (isWarrayOccupiedBelowCurrentPosition())
-							    	incrementRandSandProgress();
+							    if (isWarrayCellBelowOccupied())
+							    	goToNextCellLocationWithWrappingThenFindNonBlankWarrayLocation();
 							    else
 							        nextState(1090);
 							} else {
 							    if (someOtherDecision) {
-							    	incrementRandSandProgress();
+							    	goToNextCellLocationWithWrappingThenFindNonBlankWarrayLocation();
 							    } else {
 							        someDecision = true;
 							        nextState(1090);
@@ -245,7 +245,7 @@ public class Amazing {
 							}
 	                    } else {
                             if (notOnLastRow()) {
-                                if (isWarrayOccupiedBelowCurrentPosition()) {
+                                if (isWarrayCellBelowOccupied()) {
                                     nextState(1020);
                                 } else {
             	                    if (generateRandom(2) == 2) {
@@ -259,7 +259,8 @@ public class Amazing {
                                     nextState(1020);
                                 } else {
                                     someDecision = true;
-                                    incrementCstore1inMazeAndDecideIfToFinish();
+                        			cellBeingFilled++;
+                                    store1inMazeAndDecideIfToFinish();
                                 }
                             }
 	                        
@@ -267,7 +268,7 @@ public class Amazing {
 	                    break;
 	
 	                case END_OF_LOOP:
-						storeCinWarrayRmin1SAndIncrementC();
+						trackInWarrayLeftOfCurrent();
 	                    vArray[currentColumn - 1][currentRow] = 2;
 	                    currentColumn--;
 	                    if (hasFilledAllCells()) {
@@ -279,7 +280,7 @@ public class Amazing {
 	                    }
 	                    break;
 	                case 1020:
-						storeCinWarrayRpls1SandIncrementC();
+						trackInWarrayRightOfCurrent();
 	                    
 	                    if (vArray[currentColumn][currentRow] == 0) {
 	                        vArray[currentColumn][currentRow] = 2;
@@ -304,14 +305,14 @@ public class Amazing {
 	                            
 	                            currentColumn = 1;
 	                            currentRow = 1;
-	                            findNonBlankWarrayLocation();
+	                            findNonBlankWarrayLocationThenStartLooping();
 	                        } else {
 	                            vArray[currentColumn][currentRow] = 3;
 
-	                            incrementRandSandProgress();
+	                            goToNextCellLocationWithWrappingThenFindNonBlankWarrayLocation();
 	                        }
 	                    } else {
-	                        storeCinWarrayRSpls1andIncrementC();
+	                        trackInWarrayBelowCurrent();
 	                        if (vArray[currentColumn][currentRow] == 0) {
 	                            vArray[currentColumn][currentRow] = 1;
 	                        } else {
@@ -339,12 +340,32 @@ public class Amazing {
 	    }
 
 
+		private boolean isWarrayCellToRightOccupied() {
+			return wArray[currentColumn + 1][currentRow] != 0;
+		}
+
+
+		private boolean onLastColumn() {
+			return currentColumn == width;
+		}
+
+
+		private boolean isWarrayCellAboveOccupied() {
+			return wArray[currentColumn][currentRow - 1] != 0;
+		}
+
+
+		private boolean onFirstRow() {
+			return currentRow - 1 == 0;
+		}
+
+
 		private boolean hasFilledAllCells() {
 			return cellBeingFilled > mazeSize;
 		}
 
 
-		private boolean isWarrayOccupiedBelowCurrentPosition() {
+		private boolean isWarrayCellBelowOccupied() {
 			return wArray[currentColumn][currentRow + 1] != 0;
 		}
 
@@ -358,33 +379,36 @@ public class Amazing {
 			if (generateRandom(2) == 2)
 			    nextState(1090);
 			else
-				writeCintoWarrayAndProceed();
+				trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 		}
 
 
 		private void do1090orEndLoop() {
-			int x = generateRandom(2);
-			if (x == 2)
+			if (generateRandom(2) == 2)
 			    nextState(1090);
 			else
 			    nextState(END_OF_LOOP);
 		}
 
 
-		private void findNonBlankWarrayLocation() {
-			if (wArray[currentColumn][currentRow] == 0) {
-				incrementRandSandProgress();
-			} else {
-			    // continue
-			    startLooping();
-			}
+		private void findNonBlankWarrayLocationThenStartLooping() {
+			while (isWarrayCurrentCellBlank()) {
+				goToNextCellLocationWithWrapping();
+			} 
+
+		    startLooping();
+		}
+
+
+		private boolean isWarrayCurrentCellBlank() {
+			return wArray[currentColumn][currentRow] == 0;
 		}
 
 
 		private void decisionPoint700() {
 			int x = generateRandom(2);
 			if (x == 1)
-				writeCintoWarrayAndProceed();
+				trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 			else if (x == 2)
 			    nextState(1020);
 			else
@@ -392,26 +416,27 @@ public class Amazing {
 		}
 
 
-		private void storeCinWarrayRSpls1andIncrementC() {
-			wArray[currentColumn][currentRow + 1] = cellBeingFilled;
+		private void trackInWarrayBelowCurrent() {
+			trackCellIdInWArray(currentColumn, currentRow+1);
+		}
+
+
+		private void trackInWarrayRightOfCurrent() {
+			trackCellIdInWArray(currentColumn+1, currentRow);
+		}
+
+
+		private void trackInWarrayLeftOfCurrent() {
+			trackCellIdInWArray(currentColumn-1, currentRow);
+		}
+		
+		private void trackCellIdInWArray(int column, int row) {
+			wArray[column][row] = cellBeingFilled;
 			cellBeingFilled++;
 		}
 
 
-		private void storeCinWarrayRpls1SandIncrementC() {
-			wArray[currentColumn + 1][currentRow] = cellBeingFilled;
-			cellBeingFilled++;
-		}
-
-
-		private void storeCinWarrayRmin1SAndIncrementC() {
-			wArray[currentColumn - 1][currentRow] = cellBeingFilled;
-			cellBeingFilled++;
-		}
-
-
-		private void incrementCstore1inMazeAndDecideIfToFinish() {
-			cellBeingFilled++;
+		private void store1inMazeAndDecideIfToFinish() {
 			vArray[currentColumn][currentRow - 1] = 1;
 			currentRow--;
 			if (hasFilledAllCells()) {
@@ -424,9 +449,9 @@ public class Amazing {
 		}
 
 
-		private void writeCintoWarrayAndProceed() {
-			wArray[currentColumn][currentRow - 1] = cellBeingFilled;
-			incrementCstore1inMazeAndDecideIfToFinish();
+		private void trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish() {
+			trackCellIdInWArray(currentColumn, currentRow - 1);
+			store1inMazeAndDecideIfToFinish();
 		}
 
 		private void decisionPoint410() {
@@ -434,7 +459,7 @@ public class Amazing {
 			if (x == 1)
 			    nextState(END_OF_LOOP);
 			else if (x == 2)
-				writeCintoWarrayAndProceed();
+				trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 			else
 			    nextState(430);
 		}
@@ -443,10 +468,10 @@ public class Amazing {
 			if (currentColumn - 1 == 0 || wArray[currentColumn - 1][currentRow] != 0) {
 			    nextState(600);
 			} else {
-		        if (currentRow - 1 == 0 || wArray[currentColumn][currentRow - 1] != 0) {
+		        if (onFirstRow() || isWarrayCellAboveOccupied()) {
 		            nextState(430);
 		        } else {
-	                if (currentColumn == width || wArray[currentColumn + 1][currentRow] != 0) {
+	                if (onLastColumn() || isWarrayCellToRightOccupied()) {
 	                    nextState(350);
 	                } else {
                         nextState(330);
@@ -456,8 +481,14 @@ public class Amazing {
 		}
 
 
-		private void incrementRandSandProgress() {
-			if (currentColumn != width) {
+		private void goToNextCellLocationWithWrappingThenFindNonBlankWarrayLocation() {
+			goToNextCellLocationWithWrapping();
+			findNonBlankWarrayLocationThenStartLooping();
+		}
+
+
+		private void goToNextCellLocationWithWrapping() {
+			if (notAtRightMostColumn()) {
 				currentColumn++;
 			} else {
 			    currentColumn = 1;
@@ -467,7 +498,11 @@ public class Amazing {
 			        currentRow = 1;
 			    }
 			}
-			findNonBlankWarrayLocation();
+		}
+
+
+		private boolean notAtRightMostColumn() {
+			return currentColumn != width;
 		}
 
 
