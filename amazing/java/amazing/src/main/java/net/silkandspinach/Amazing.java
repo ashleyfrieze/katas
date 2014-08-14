@@ -34,12 +34,12 @@ public class Amazing {
     	final int endPointOfMaze;
     	
         boolean someDecision;
-        int z;
+        boolean someOtherDecision;
         
-        int c;
+        int cellBeingFilled;
 
-        int r;
-        int s;
+        int currentColumn;
+        int currentRow;
         
         int width;
         int height;
@@ -54,14 +54,14 @@ public class Amazing {
 	        endPointOfMaze = width * height + 1;
 	        
 	        someDecision = false;
-	        z = 0;
+	        someOtherDecision = false;
 	        
-	        c = 1;
-	        wArray[entrance][1] = c;
-	        c++;
+	        cellBeingFilled = 1;
+	        wArray[entrance][1] = cellBeingFilled;
+	        cellBeingFilled++;
 	
-	        r = entrance;
-	        s = 1;
+	        currentColumn = entrance;
+	        currentRow = 1;
 
     	}
 
@@ -71,15 +71,6 @@ public class Amazing {
 	        while (nextState != STATE_FINISHED) {
 	
 				switch (nextState) {
-	                case 260:
-	                    if (wArray[r][s] == 0) {
-	                    	incrementRandSandProgress();
-	                    } else {
-	                        // continue
-	            	        startLooping();
-	                    }
-	                    break;
-	
 	                case 330: {
 	                    int x = generateRandomMazeElement();
 	
@@ -94,13 +85,13 @@ public class Amazing {
 	                    break;
 	                }
 	                case 350:
-	                    if (s != height) {
-	                        if (wArray[r][s + 1] != 0)
+	                    if (currentRow != height) {
+	                        if (wArray[currentColumn][currentRow + 1] != 0)
 	                        	decisionPoint410();
 	                        else
 	                            nextState(390);
 	                    } else {
-	                        if (z == 1) {
+	                        if (someOtherDecision) {
 	                        	decisionPoint410();
 	                        } else {
 	                            someDecision = true;
@@ -123,22 +114,22 @@ public class Amazing {
 	                }
 
 	                case 430:
-	                    if (r == width)
+	                    if (currentColumn == width)
 	                        nextState(530);
 	                    else
 	                        nextState(440);
 	                    break;
 	                case 440:
-	                    if (wArray[r + 1][s] != 0) {
+	                    if (wArray[currentColumn + 1][currentRow] != 0) {
 	                        nextState(530);
 	                    } else {
-	                        if (s != height) {
-	                            if (wArray[r][s + 1] != 0)
+	                        if (currentRow != height) {
+	                            if (wArray[currentColumn][currentRow + 1] != 0)
 	                                nextState(510);
 	                            else
 	                                nextState(490);
 	                        } else {
-	                            if (z == 1) {
+	                            if (someOtherDecision) {
 	                                nextState(510);
 	                            } else {
 	                                someDecision = true;
@@ -170,13 +161,13 @@ public class Amazing {
 	                    break;
 	                }
 	                case 530:
-	                    if (s != height) {
-	                        if (wArray[r][s + 1] != 0)
+	                    if (currentRow != height) {
+	                        if (wArray[currentColumn][currentRow + 1] != 0)
 	                            nextState(END_OF_LOOP);
 	                        else
 	                            nextState(570);
 	                    } else {
-	                        if (z == 1) {
+	                        if (someOtherDecision) {
 	                            nextState(END_OF_LOOP);
 	                        } else {
 	                            someDecision = true;
@@ -193,19 +184,19 @@ public class Amazing {
 	                    break;
 	                }
 	                case 600:
-	                    if (s - 1 == 0 || wArray[r][s - 1] != 0) {
+	                    if (currentRow - 1 == 0 || wArray[currentColumn][currentRow - 1] != 0) {
 	                        nextState(790);
 	                    } else {
-		                    if (r == width || wArray[r + 1][s] != 0) {
+		                    if (currentColumn == width || wArray[currentColumn + 1][currentRow] != 0) {
 		                        nextState(720);
 		                    } else {
-	                            if (s != height) {
-	        	                    if (wArray[r][s + 1] != 0)
+	                            if (currentRow != height) {
+	        	                    if (wArray[currentColumn][currentRow + 1] != 0)
 	        	                    	decisionPoint700();
 	        	                    else
 	        	                        nextState(680);
 	                            } else {
-	                                if (z == 1) {
+	                                if (someOtherDecision) {
 	                                	decisionPoint700();
 	                                } else {
 	                                    someDecision = true;
@@ -229,13 +220,13 @@ public class Amazing {
 	                    break;
 	                }
 	                case 720:
-	                    if (s != height) {
-	                        if (wArray[r][s + 1] != 0)
+	                    if (currentRow != height) {
+	                        if (wArray[currentColumn][currentRow + 1] != 0)
 	                        	writeCintoWarrayAndProceed();
 	                        else
 	                            nextState(760);
 	                    } else {
-	                        if (z == 1) {
+	                        if (someOtherDecision) {
 	                        	writeCintoWarrayAndProceed();
 	                        } else {
 	                            someDecision = true;
@@ -252,14 +243,14 @@ public class Amazing {
 	                    break;
 	                }
 	                case 790:
-	                    if (r == width || wArray[r + 1][s] != 0) {
-	                    	if (s != height) {
-							    if (wArray[r][s + 1] != 0)
+	                    if (currentColumn == width || wArray[currentColumn + 1][currentRow] != 0) {
+	                    	if (currentRow != height) {
+							    if (wArray[currentColumn][currentRow + 1] != 0)
 							    	incrementRandSandProgress();
 							    else
 							        nextState(1090);
 							} else {
-							    if (z == 1) {
+							    if (someOtherDecision) {
 							    	incrementRandSandProgress();
 							    } else {
 							        someDecision = true;
@@ -267,13 +258,13 @@ public class Amazing {
 							    }
 							}
 	                    } else {
-                            if (s != height) {
-                                if (wArray[r][s + 1] != 0)
+                            if (currentRow != height) {
+                                if (wArray[currentColumn][currentRow + 1] != 0)
                                     nextState(1020);
                                 else
             	                    decisionPoint850();
                             } else {
-                                if (z == 1) {
+                                if (someOtherDecision) {
                                     nextState(1020);
                                 } else {
                                     someDecision = true;
@@ -286,9 +277,9 @@ public class Amazing {
 	
 	                case END_OF_LOOP:
 						storeCinWarrayRmin1SAndIncrementC();
-	                    vArray[r - 1][s] = 2;
-	                    r--;
-	                    if (c == endPointOfMaze) {
+	                    vArray[currentColumn - 1][currentRow] = 2;
+	                    currentColumn--;
+	                    if (cellBeingFilled == endPointOfMaze) {
 	                        nextState(STATE_FINISHED);
 	                    } else {
 		                    someDecision = false;
@@ -299,15 +290,15 @@ public class Amazing {
 	                case 1020:
 						storeCinWarrayRpls1SandIncrementC();
 	                    
-	                    if (vArray[r][s] == 0) {
-	                        vArray[r][s] = 2;
+	                    if (vArray[currentColumn][currentRow] == 0) {
+	                        vArray[currentColumn][currentRow] = 2;
 	                    } else {
-	                        vArray[r][s] = 3;
+	                        vArray[currentColumn][currentRow] = 3;
 	                    }
 	
-	                    r++;
+	                    currentColumn++;
 	
-	                    if (c == endPointOfMaze)
+	                    if (cellBeingFilled == endPointOfMaze)
 	                        nextState(STATE_FINISHED);
 	                    else
 	                        nextState(600);
@@ -316,28 +307,28 @@ public class Amazing {
 	                case 1090:
 	                    if (someDecision) {
 	                    	someDecision = false;
-	                        z = 1;
-	                        if (vArray[r][s] == 0) {
-	                            vArray[r][s] = 1;
+	                    	someOtherDecision= true;
+	                        if (vArray[currentColumn][currentRow] == 0) {
+	                            vArray[currentColumn][currentRow] = 1;
 	                            
-	                            r = 1;
-	                            s = 1;
-	                            nextState(260);
+	                            currentColumn = 1;
+	                            currentRow = 1;
+	                            findNonBlankWarrayLocation();
 	                        } else {
-	                            vArray[r][s] = 3;
+	                            vArray[currentColumn][currentRow] = 3;
 
 	                            incrementRandSandProgress();
 	                        }
 	                    } else {
 	                        storeCinWarrayRSpls1andIncrementC();
-	                        if (vArray[r][s] == 0) {
-	                            vArray[r][s] = 1;
+	                        if (vArray[currentColumn][currentRow] == 0) {
+	                            vArray[currentColumn][currentRow] = 1;
 	                        } else {
-	                            vArray[r][s] = 3;
+	                            vArray[currentColumn][currentRow] = 3;
 	                        }
 	                        
-	                        s++;
-	                        if (c == endPointOfMaze) {
+	                        currentRow++;
+	                        if (cellBeingFilled == endPointOfMaze) {
 	                            nextState(STATE_FINISHED);
 	                        } else {
 	                        	// continue;
@@ -357,6 +348,16 @@ public class Amazing {
 	    }
 
 
+		private void findNonBlankWarrayLocation() {
+			if (wArray[currentColumn][currentRow] == 0) {
+				incrementRandSandProgress();
+			} else {
+			    // continue
+			    startLooping();
+			}
+		}
+
+
 		private void decisionPoint700() {
 			int x = generateRandom(2);
 			if (x == 1)
@@ -369,28 +370,28 @@ public class Amazing {
 
 
 		private void storeCinWarrayRSpls1andIncrementC() {
-			wArray[r][s + 1] = c;
-			c++;
+			wArray[currentColumn][currentRow + 1] = cellBeingFilled;
+			cellBeingFilled++;
 		}
 
 
 		private void storeCinWarrayRpls1SandIncrementC() {
-			wArray[r + 1][s] = c;
-			c++;
+			wArray[currentColumn + 1][currentRow] = cellBeingFilled;
+			cellBeingFilled++;
 		}
 
 
 		private void storeCinWarrayRmin1SAndIncrementC() {
-			wArray[r - 1][s] = c;
-			c++;
+			wArray[currentColumn - 1][currentRow] = cellBeingFilled;
+			cellBeingFilled++;
 		}
 
 
 		private void incrementCstore1inMazeAndDecideIfToFinish() {
-			c++;
-			vArray[r][s - 1] = 1;
-			s--;
-			if (c == endPointOfMaze) {
+			cellBeingFilled++;
+			vArray[currentColumn][currentRow - 1] = 1;
+			currentRow--;
+			if (cellBeingFilled == endPointOfMaze) {
 			    nextState(STATE_FINISHED);
 			} else {
 				someDecision = false;
@@ -401,7 +402,7 @@ public class Amazing {
 
 
 		private void writeCintoWarrayAndProceed() {
-			wArray[r][s - 1] = c;
+			wArray[currentColumn][currentRow - 1] = cellBeingFilled;
 			incrementCstore1inMazeAndDecideIfToFinish();
 		}
 
@@ -416,13 +417,13 @@ public class Amazing {
 		}
 
 		private void startLooping() {
-			if (r - 1 == 0 || wArray[r - 1][s] != 0) {
+			if (currentColumn - 1 == 0 || wArray[currentColumn - 1][currentRow] != 0) {
 			    nextState(600);
 			} else {
-		        if (s - 1 == 0 || wArray[r][s - 1] != 0) {
+		        if (currentRow - 1 == 0 || wArray[currentColumn][currentRow - 1] != 0) {
 		            nextState(430);
 		        } else {
-	                if (r == width || wArray[r + 1][s] != 0) {
+	                if (currentColumn == width || wArray[currentColumn + 1][currentRow] != 0) {
 	                    nextState(350);
 	                } else {
                         nextState(330);
@@ -433,17 +434,17 @@ public class Amazing {
 
 
 		private void incrementRandSandProgress() {
-			if (r != width) {
-				r++;
+			if (currentColumn != width) {
+				currentColumn++;
 			} else {
-			    r = 1;
-			    if (s != height) {
-			        s++;
+			    currentColumn = 1;
+			    if (currentRow != height) {
+			        currentRow++;
 			    } else {
-			        s = 1;
+			        currentRow = 1;
 			    }
 			}
-			nextState(260);
+			findNonBlankWarrayLocation();
 		}
 
 
@@ -501,7 +502,6 @@ public class Amazing {
         int entrance = generateRandom(width);
 
         printTopLine(width, entrance);
-
         printMazeInnards(width, height, generateMaze(width, height, entrance));
     }
 
@@ -516,11 +516,11 @@ public class Amazing {
 	}
 
 	private static int[][] constructBlankMaze1BasedArray(int width, int height) {
-		int[][] wArray = new int[width + 1][height + 1];
+		int[][] array = new int[width + 1][height + 1];
         for (int i = 0; i <= width; i++) {
-            wArray[i] = new int[height + 1];
+            array[i] = new int[height + 1];
         }
-		return wArray;
+		return array;
 	}
 
 	private static boolean tooSmall(int h, int v) {
