@@ -31,7 +31,7 @@ public class Amazing {
     	
     	private int[][] wArray;
     	private int[][] vArray;
-    	final int endPointOfMaze;
+    	final int mazeSize;
     	
         boolean someDecision;
         boolean someOtherDecision;
@@ -51,7 +51,7 @@ public class Amazing {
 	        wArray = constructBlankMaze1BasedArray(width, height);
 	        vArray = constructBlankMaze1BasedArray(width, height);
 	        
-	        endPointOfMaze = width * height + 1;
+	        mazeSize = width * height;
 	        
 	        someDecision = false;
 	        someOtherDecision = false;
@@ -72,7 +72,7 @@ public class Amazing {
 	
 				switch (nextState) {
 	                case 330: {
-	                    int x = generateRandomMazeElement();
+	                    int x = generateRandom(3);
 	
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
@@ -85,8 +85,8 @@ public class Amazing {
 	                    break;
 	                }
 	                case 350:
-	                    if (currentRow != height) {
-	                        if (wArray[currentColumn][currentRow + 1] != 0)
+	                    if (notOnLastRow()) {
+	                        if (isWarrayOccupiedBelowCurrentPosition())
 	                        	decisionPoint410();
 	                        else
 	                            nextState(390);
@@ -101,7 +101,7 @@ public class Amazing {
 	                    break;
 	
 	                case 390: {
-	                    int x = generateRandomMazeElement();
+	                    int x = generateRandom(3);
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
 	                    else if (x == 2)
@@ -123,8 +123,8 @@ public class Amazing {
 	                    if (wArray[currentColumn + 1][currentRow] != 0) {
 	                        nextState(530);
 	                    } else {
-	                        if (currentRow != height) {
-	                            if (wArray[currentColumn][currentRow + 1] != 0)
+	                        if (notOnLastRow()) {
+	                            if (isWarrayOccupiedBelowCurrentPosition())
 	                                nextState(510);
 	                            else
 	                                nextState(490);
@@ -139,7 +139,7 @@ public class Amazing {
 	                    }
 	                    break;
 	                case 490: {
-	                    int x = generateRandomMazeElement();
+	                    int x = generateRandom(3);
 	                    if (x == 1)
 	                        nextState(END_OF_LOOP);
 	                    else if (x == 2)
@@ -161,28 +161,21 @@ public class Amazing {
 	                    break;
 	                }
 	                case 530:
-	                    if (currentRow != height) {
-	                        if (wArray[currentColumn][currentRow + 1] != 0)
+	                    if (notOnLastRow()) {
+	                        if (isWarrayOccupiedBelowCurrentPosition())
 	                            nextState(END_OF_LOOP);
 	                        else
-	                            nextState(570);
+	                        	do1090orEndLoop();
 	                    } else {
 	                        if (someOtherDecision) {
 	                            nextState(END_OF_LOOP);
 	                        } else {
 	                            someDecision = true;
-	                            nextState(570);
+	                            do1090orEndLoop();
 	                        }
 	                    }
 	                    break;
-	                case 570: {
-	                    int x = generateRandom(2);
-	                    if (x == 2)
-	                        nextState(1090);
-	                    else
-	                        nextState(END_OF_LOOP);
-	                    break;
-	                }
+
 	                case 600:
 	                    if (currentRow - 1 == 0 || wArray[currentColumn][currentRow - 1] != 0) {
 	                        nextState(790);
@@ -190,8 +183,8 @@ public class Amazing {
 		                    if (currentColumn == width || wArray[currentColumn + 1][currentRow] != 0) {
 		                        nextState(720);
 		                    } else {
-	                            if (currentRow != height) {
-	        	                    if (wArray[currentColumn][currentRow + 1] != 0)
+	                            if (notOnLastRow()) {
+	        	                    if (isWarrayOccupiedBelowCurrentPosition())
 	        	                    	decisionPoint700();
 	        	                    else
 	        	                        nextState(680);
@@ -208,7 +201,7 @@ public class Amazing {
 	                    break;
 
 	                case 680: {
-	                    int x = generateRandomMazeElement();
+	                    int x = generateRandom(3);
 	                    if (x == 1)
 	                    	writeCintoWarrayAndProceed();
 	                    else if (x == 2)
@@ -220,32 +213,25 @@ public class Amazing {
 	                    break;
 	                }
 	                case 720:
-	                    if (currentRow != height) {
-	                        if (wArray[currentColumn][currentRow + 1] != 0)
+	                    if (notOnLastRow()) {
+	                        if (isWarrayOccupiedBelowCurrentPosition()) {
 	                        	writeCintoWarrayAndProceed();
-	                        else
-	                            nextState(760);
+	                        } else {
+	                        	do1090orWriteCintoWarrayAndProceed();
+	                        }
 	                    } else {
 	                        if (someOtherDecision) {
 	                        	writeCintoWarrayAndProceed();
 	                        } else {
 	                            someDecision = true;
-	                            nextState(760);
+	                            do1090orWriteCintoWarrayAndProceed();
 	                        }
 	                    }
 	                    break;
-	                case 760: {
-	                    int x = generateRandom(2);
-	                    if (x == 2)
-	                        nextState(1090);
-	                    else
-	                    	writeCintoWarrayAndProceed();
-	                    break;
-	                }
 	                case 790:
 	                    if (currentColumn == width || wArray[currentColumn + 1][currentRow] != 0) {
-	                    	if (currentRow != height) {
-							    if (wArray[currentColumn][currentRow + 1] != 0)
+	                    	if (notOnLastRow()) {
+							    if (isWarrayOccupiedBelowCurrentPosition())
 							    	incrementRandSandProgress();
 							    else
 							        nextState(1090);
@@ -258,11 +244,16 @@ public class Amazing {
 							    }
 							}
 	                    } else {
-                            if (currentRow != height) {
-                                if (wArray[currentColumn][currentRow + 1] != 0)
+                            if (notOnLastRow()) {
+                                if (isWarrayOccupiedBelowCurrentPosition()) {
                                     nextState(1020);
-                                else
-            	                    decisionPoint850();
+                                } else {
+            	                    if (generateRandom(2) == 2) {
+									    nextState(1090);
+            	                    } else {
+									    nextState(1020);
+            	                    }
+                                }
                             } else {
                                 if (someOtherDecision) {
                                     nextState(1020);
@@ -279,7 +270,7 @@ public class Amazing {
 						storeCinWarrayRmin1SAndIncrementC();
 	                    vArray[currentColumn - 1][currentRow] = 2;
 	                    currentColumn--;
-	                    if (cellBeingFilled == endPointOfMaze) {
+	                    if (hasFilledAllCells()) {
 	                        nextState(STATE_FINISHED);
 	                    } else {
 		                    someDecision = false;
@@ -298,7 +289,7 @@ public class Amazing {
 	
 	                    currentColumn++;
 	
-	                    if (cellBeingFilled == endPointOfMaze)
+	                    if (hasFilledAllCells())
 	                        nextState(STATE_FINISHED);
 	                    else
 	                        nextState(600);
@@ -328,7 +319,7 @@ public class Amazing {
 	                        }
 	                        
 	                        currentRow++;
-	                        if (cellBeingFilled == endPointOfMaze) {
+	                        if (hasFilledAllCells()) {
 	                            nextState(STATE_FINISHED);
 	                        } else {
 	                        	// continue;
@@ -346,6 +337,38 @@ public class Amazing {
 	        
 	        return vArray;
 	    }
+
+
+		private boolean hasFilledAllCells() {
+			return cellBeingFilled > mazeSize;
+		}
+
+
+		private boolean isWarrayOccupiedBelowCurrentPosition() {
+			return wArray[currentColumn][currentRow + 1] != 0;
+		}
+
+
+		private boolean notOnLastRow() {
+			return currentRow != height;
+		}
+
+
+		private void do1090orWriteCintoWarrayAndProceed() {
+			if (generateRandom(2) == 2)
+			    nextState(1090);
+			else
+				writeCintoWarrayAndProceed();
+		}
+
+
+		private void do1090orEndLoop() {
+			int x = generateRandom(2);
+			if (x == 2)
+			    nextState(1090);
+			else
+			    nextState(END_OF_LOOP);
+		}
 
 
 		private void findNonBlankWarrayLocation() {
@@ -391,7 +414,7 @@ public class Amazing {
 			cellBeingFilled++;
 			vArray[currentColumn][currentRow - 1] = 1;
 			currentRow--;
-			if (cellBeingFilled == endPointOfMaze) {
+			if (hasFilledAllCells()) {
 			    nextState(STATE_FINISHED);
 			} else {
 				someDecision = false;
@@ -438,7 +461,7 @@ public class Amazing {
 				currentColumn++;
 			} else {
 			    currentColumn = 1;
-			    if (currentRow != height) {
+			    if (notOnLastRow()) {
 			        currentRow++;
 			    } else {
 			        currentRow = 1;
@@ -448,17 +471,7 @@ public class Amazing {
 		}
 
 
-		private void decisionPoint850() {
-			int x = generateRandom(2);
-			if (x == 1)
-			    nextState(1020);
-			else if (x == 2)
-			    nextState(1090);
-			else
-			    nextState(1020);
-		}
-		
-	    public static void nextState(int lineno) {
+		public static void nextState(int lineno) {
 	        nextState = lineno;
 	    }
     }
@@ -509,10 +522,6 @@ public class Amazing {
 		MazeGenerator generator = new MazeGenerator(width, height, entrance);
 		return generator.generate();
 
-	}
-
-	private static int generateRandomMazeElement() {
-		return generateRandom(3);
 	}
 
 	private static int[][] constructBlankMaze1BasedArray(int width, int height) {
