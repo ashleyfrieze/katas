@@ -32,81 +32,92 @@ public class MazeGenerator {
     }
 	
     public void generate() {
-        startLooping();
         while (!pathTracker.hasFilledAllCells()) {
-
-			switch (nextState) {
-                case 330: {
-                    int x = randomChoiceOfFour();
-
-                    if (x == 1)
-                        routeGoesLeft();
-                    else if (x == 2)
-                    	routeGoesUp();
-                    else if (x == 3)
-                    	routeGoesRight();
-                    else
-                        nextState(350);
-                    break;
-                }
-                
-                case 350:
-                	if ((!pathTracker.onLastRow() && pathTracker.isGoingDownImpossible())
-                			||pathTracker.onLastRow() && routeWantsToGoDown) {
-                		selectLeftUpOrDown();
-                	} else {
-                		if (pathTracker.onLastRow()) {
-                            routeWantsToGoUp = true;
-                		}
-	                    int x = randomChoiceOfFour();
-	                    if (x == 1)
-	                        routeGoesLeft();
-	                    else if (x == 2)
-	                    	routeGoesUp();
-	                    else if (x == 3)
-	                        goDownAndForceDownwardRoute();
-	                    else
-	                    	selectLeftUpOrDown();
-                	}
-                    break;
-
-
-                case 790:
-                    if (pathTracker.cannotGoRight()) {
-                    	if ((!pathTracker.onLastRow() && pathTracker.isGoingDownImpossible()) 
-                    			|| (pathTracker.onLastRow() && routeWantsToGoDown)) {
-							pathTracker.goToNextCellLocationWithWrapping();
-							findPointOnRouteThenStartLooping();
-						} else {
-						    goDownAndForceDownwardRoute();
-						} 
-                    } else {
-                        if (!pathTracker.onLastRow()) {
-                            if (pathTracker.isGoingDownImpossible()) {
-                            	routeGoesRight();
-                            } else {
-        	                    selectDownOrRight();
-                            }
-                        } else {
-                            if (routeWantsToGoDown) {
-                            	routeGoesRight();
-                            } else {
-                    			pathTracker.incrementCell();
-                                addRouteToMazeAboveCursorAndKeepLooping();
-                            }
-                        }
-                        
-                    }
-                    break;
-
-
-                default:
-                	throw new RuntimeException("Unknown next state " + nextState);
-
-            }
-
+            if (pathTracker.cannotGoLeft()) {
+				moveCursorAbout();
+			} else {
+			    if (pathTracker.cannotGoUp()) {
+					workOutNextStepsWhileFacingDownwards();
+			    } else {
+			        if (pathTracker.cannotGoRight()) {
+			        	goAnyDirectionPossible();
+			        } else {
+			            if (!selectAStandardRoute()) {
+			            	goAnyDirectionPossible();
+			            }
+			        }
+			    }
+			}        	
         }
     }
+
+	private void goAnyDirectionPossible() {
+		if ((!pathTracker.onLastRow() && pathTracker.isGoingDownImpossible())
+				||pathTracker.onLastRow() && routeWantsToGoDown) {
+			selectLeftUpOrDown();
+		} else {
+			if (pathTracker.onLastRow()) {
+		        routeWantsToGoUp = true;
+			}
+		    selectLeftUpForcedDownOrAnything();
+		}
+	}
+
+	private void goRightOrDown() {
+		if (pathTracker.cannotGoRight()) {
+			if ((!pathTracker.onLastRow() && pathTracker.isGoingDownImpossible()) 
+					|| (pathTracker.onLastRow() && routeWantsToGoDown)) {
+				pathTracker.goToNextCellLocationWithWrapping();
+				findPointOnRouteThenStartLooping();
+			} else {
+			    goDownAndForceDownwardRoute();
+			} 
+		} else {
+		    if (!pathTracker.onLastRow()) {
+		        if (pathTracker.isGoingDownImpossible()) {
+		        	routeGoesRight();
+		        } else {
+		            selectDownOrRight();
+		        }
+		    } else {
+		        if (routeWantsToGoDown) {
+		        	routeGoesRight();
+		        } else {
+					pathTracker.incrementCell();
+		            addRouteToMazeAboveCursorAndKeepLooping();
+		        }
+		    }
+		    
+		}
+	}
+
+	private void selectLeftUpForcedDownOrAnything() {
+		int x = randomChoiceOfFour();
+		if (x == 1)
+		    routeGoesLeft();
+		else if (x == 2)
+			routeGoesUp();
+		else if (x == 3)
+		    goDownAndForceDownwardRoute();
+		else
+			selectLeftUpOrDown();
+	}
+
+	private boolean selectAStandardRoute() {
+		int x = randomChoiceOfFour();
+
+		if (x == 1) {
+		    routeGoesLeft();
+		} else if (x == 2) {
+			routeGoesUp();
+		} else if (x == 3) {
+			routeGoesRight();
+		} else {
+		    return false;
+		}
+		
+		return true;
+	}
 
 
 	private void selectAnyDirection() {
@@ -237,9 +248,6 @@ public class MazeGenerator {
 		}
 	}
 
-
-
-
 	private int randomChoiceOfFour() {
 		return randomGenerator.generateRandom(3);
 	}
@@ -252,7 +260,7 @@ public class MazeGenerator {
 
 	private void moveCursorAbout() {
 		if (pathTracker.cannotGoUp()) {
-		    nextState(790);
+			goRightOrDown();
 		} else {
 		    if (pathTracker.cannotGoRight()) {
 		    	moveDownIfPossibleOrReverse();
@@ -281,12 +289,6 @@ public class MazeGenerator {
 		} else {
 		    
 			routeGoesDown();
-		    
-
-		    if (!pathTracker.hasFilledAllCells()) {
-		    	// continue;
-		        startLooping();
-		    }
 		}
 	}
 
@@ -326,8 +328,6 @@ public class MazeGenerator {
 
         if (!pathTracker.hasFilledAllCells()) {
             routeWantsToGoUp = false;
-            // continue
-	        startLooping();
         }
 	}
 
@@ -351,8 +351,6 @@ public class MazeGenerator {
 
 	private void findPointOnRouteThenStartLooping() {
 		pathTracker.moveToNextPointOnRoute();
-
-	    startLooping();
 	}
 
 
@@ -370,7 +368,6 @@ public class MazeGenerator {
 		pathTracker.decrementRow();
 		pathTracker.setCurrentCellValue(mazeRoute, UP_OR_DOWN);
 		routeWantsToGoUp = false;
-	    startLooping();
 	}
 
 
@@ -378,25 +375,6 @@ public class MazeGenerator {
 		pathTracker.trackAboveCurrent();
 		
 		addRouteToMazeAboveCursorAndKeepLooping();
-	}
-
-	private void startLooping() {
-		if (pathTracker.hasFilledAllCells()) {
-			return;
-		}
-		if (pathTracker.cannotGoLeft()) {
-			moveCursorAbout();
-		} else {
-	        if (pathTracker.cannotGoUp()) {
-				workOutNextStepsWhileFacingDownwards();
-	        } else {
-                if (pathTracker.cannotGoRight()) {
-                    nextState(350);
-                } else {
-                    nextState(330);
-                }
-		    }
-		}
 	}
 
 
