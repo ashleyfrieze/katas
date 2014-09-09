@@ -19,6 +19,11 @@ public class Amazing {
 	private static final String OPENING = ":  ";
 	private static final String RIGHT_WALL = ":";
 	
+	private static final int DEAD_END = 0;
+	private static final int UP_OR_DOWN = 1;
+	private static final int PASSAGE = 2;
+	private static final int CORNER = 3;
+	
     private static Random random = new Random(0);
     private static StringBuffer result = new StringBuffer();
     
@@ -29,8 +34,8 @@ public class Amazing {
     	private int[][] vArray;
     	final int mazeSize;
     	
-        boolean findNextCursorPointWhenMakingCurrentIntoRoute;
-        boolean someOtherDecision;
+        boolean routeWantsToGoUp;
+        boolean routeWantsToGoDown;
         
         int cellBeingFilled;
 
@@ -49,8 +54,8 @@ public class Amazing {
 	        
 	        mazeSize = width * height;
 	        
-	        findNextCursorPointWhenMakingCurrentIntoRoute = false;
-	        someOtherDecision = false;
+	        routeWantsToGoUp = false;
+	        routeWantsToGoDown = false;
 	        
 	        cellBeingFilled = 1;
 	        wArray[entrance][1] = cellBeingFilled;
@@ -71,11 +76,11 @@ public class Amazing {
 	                    int x = randomChoiceOfFour();
 	
 	                    if (x == 1)
-	                        wallToTheLeftAndContinue();
+	                        routeGoesLeft();
 	                    else if (x == 2)
-	                    	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
+	                    	routeGoesUp();
 	                    else if (x == 3)
-	                        nextState(1020);
+	                    	routeGoesRight();
 	                    else
 	                        nextState(350);
 	                    break;
@@ -85,26 +90,18 @@ public class Amazing {
 	                case 390: {
 	                    int x = randomChoiceOfFour();
 	                    if (x == 1)
-	                        wallToTheLeftAndContinue();
+	                        routeGoesLeft();
 	                    else if (x == 2)
-	                    	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
+	                    	routeGoesUp();
 	                    else if (x == 3)
-	                        makeCurrentPositionIntoRoute();
+	                        routeTurnsToGoDown();
 	                    else
 	                    	decisionPoint410();
 	                    break;
 	                }
 
 	                case 490: {
-	                    int x = randomChoiceOfFour();
-	                    if (x == 1)
-	                        wallToTheLeftAndContinue();
-	                    else if (x == 2)
-	                        nextState(1020);
-	                    else if (x == 3)
-	                    	makeCurrentPositionIntoRoute();
-	                    else
-	                        nextState(510);
+	                    selectLeftRightOrDownOrFaceDown();
 	                    break;
 	                }
 	                
@@ -112,11 +109,11 @@ public class Amazing {
 	                case 680: {
 	                    int x = randomChoiceOfFour();
 	                    if (x == 1)
-	                    	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
+	                    	routeGoesUp();
 	                    else if (x == 2)
-	                        nextState(1020);
+	                    	routeGoesRight();
 	                    else if (x == 3)
-	                    	makeCurrentPositionIntoRoute();
+	                    	routeTurnsToGoDown();
 	                    else
 	                    	decisionPoint700();
 	                    break;
@@ -124,11 +121,11 @@ public class Amazing {
 	                
 	                
 	                case 350:
-	                	if ((!onLastRow() && isWarrayCellBelowOccupied())||onLastRow() && someOtherDecision) {
+	                	if ((!onLastRow() && isWarrayCellBelowOccupied())||onLastRow() && routeWantsToGoDown) {
 	                		decisionPoint410();
 	                	} else {
 	                		if (onLastRow()) {
-	                            findNextCursorPointWhenMakingCurrentIntoRoute = true;
+	                            routeWantsToGoUp = true;
 	                		}
 	                		nextState(390);
 	                	}
@@ -136,62 +133,38 @@ public class Amazing {
 
 	                case 440:
 	                    if (isWarrayCellToRightOccupied()) {
-	                        nextState(530);
+	    					goDownOrLeft();
 	                    } else {
 	                        if (!onLastRow()) {
 	                            if (isWarrayCellBelowOccupied())
-	                                nextState(510);
+	                            	selectLeftRightOrDown();
 	                            else
 	                                nextState(490);
 	                        } else {
-	                            if (someOtherDecision) {
-	                                nextState(510);
+	                            if (routeWantsToGoDown) {
+	                            	selectLeftRightOrDown();
 	                            } else {
-	                                findNextCursorPointWhenMakingCurrentIntoRoute = true;
+	                                routeWantsToGoUp = true;
 	                                nextState(490);
 	                            }
 	                        }
 	                    }
 	                    break;
 
-	                case 510: {
-	                    int x = randomChoiceOfThree();
-	                    if (x == 1)
-	                        wallToTheLeftAndContinue();
-	                    else if (x == 2)
-	                        nextState(1020);
-	                    else
-	                        nextState(530);
-	                    break;
-	                }
-	                case 530:
-	                    if (!onLastRow()) {
-	                        if (isWarrayCellBelowOccupied())
-	                            wallToTheLeftAndContinue();
-	                        else
-	                        	eitherMakeCurrentPositionIntoRouteOrLoopSomeMore();
-	                    } else {
-	                        if (someOtherDecision) {
-	                            wallToTheLeftAndContinue();
-	                        } else {
-	                            findNextCursorPointWhenMakingCurrentIntoRoute = true;
-	                            eitherMakeCurrentPositionIntoRouteOrLoopSomeMore();
-	                        }
-	                    }
-	                    break;
+
 
 	                case 720:
 	                    if (!onLastRow()) {
 	                        if (isWarrayCellBelowOccupied()) {
-	                        	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
+	                        	routeGoesUp();
 	                        } else {
 	                        	do1090orWriteCintoWarrayAndProceed();
 	                        }
 	                    } else {
-	                        if (someOtherDecision) {
-	                        	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
+	                        if (routeWantsToGoDown) {
+	                        	routeGoesUp();
 	                        } else {
-	                            findNextCursorPointWhenMakingCurrentIntoRoute = true;
+	                            routeWantsToGoUp = true;
 	                            do1090orWriteCintoWarrayAndProceed();
 	                        }
 	                    }
@@ -200,33 +173,33 @@ public class Amazing {
 	                    if (onLastColumn() || isWarrayCellToRightOccupied()) {
 	                    	if (!onLastRow()) {
 							    if (isWarrayCellBelowOccupied())
-							    	goToNextCellLocationWithWrappingThenFindNonBlankWarrayLocation();
+							    	findPointOnRouteAfterCurrent();
 							    else
-							    	makeCurrentPositionIntoRoute();
+							    	routeTurnsToGoDown();
 							} else {
-							    if (someOtherDecision) {
-							    	goToNextCellLocationWithWrappingThenFindNonBlankWarrayLocation();
+							    if (routeWantsToGoDown) {
+							    	findPointOnRouteAfterCurrent();
 							    } else {
-							        findNextCursorPointWhenMakingCurrentIntoRoute = true;
-							        makeCurrentPositionIntoRoute();
+							        routeWantsToGoUp = true;
+							        routeTurnsToGoDown();
 							    }
 							}
 	                    } else {
                             if (!onLastRow()) {
                                 if (isWarrayCellBelowOccupied()) {
-                                    nextState(1020);
+                                	routeGoesRight();
                                 } else {
             	                    if (randomChoiceOfThree() == 2) {
-            	                    	makeCurrentPositionIntoRoute();
+            	                    	routeTurnsToGoDown();
             	                    } else {
-									    nextState(1020);
+            	                    	routeGoesRight();
             	                    }
                                 }
                             } else {
-                                if (someOtherDecision) {
-                                    nextState(1020);
+                                if (routeWantsToGoDown) {
+                                	routeGoesRight();
                                 } else {
-                                    findNextCursorPointWhenMakingCurrentIntoRoute = true;
+                                    routeWantsToGoUp = true;
                         			cellBeingFilled++;
                                     addRouteToMazeAboveCursorAndDecideWhetherToStop();
                                 }
@@ -234,23 +207,7 @@ public class Amazing {
 	                        
 	                    }
 	                    break;
-	
-	                case 1020:
-						trackInWarrayRightOfCurrent();
-	                    
-	                    if (vArray[currentColumn][currentRow] == 0) {
-	                        vArray[currentColumn][currentRow] = 2;
-	                    } else {
-	                        vArray[currentColumn][currentRow] = 3;
-	                    }
-	
-	                    currentColumn++;
-	
-	                    if (!hasFilledAllCells()) {
-	                    	moveCursorAbout();
-	                    }
-	                    break;
-	
+
 
 	                default:
 	                	throw new RuntimeException("Unknown next state " + nextState);
@@ -263,9 +220,67 @@ public class Amazing {
 	    }
 
 
+		private void selectLeftRightOrDownOrFaceDown() {
+			int x = randomChoiceOfFour();
+			if (x == 1)
+			    routeGoesLeft();
+			else if (x == 2)
+				routeGoesRight();
+			else if (x == 3)
+				routeTurnsToGoDown();
+			else
+				selectLeftRightOrDown();
+		}
+
+
+		private void selectLeftRightOrDown() {
+			int x = randomChoiceOfThree();
+			if (x == 1)
+			    routeGoesLeft();
+			else if (x == 2)
+				routeGoesRight();
+			else
+				goDownOrLeft();
+		}
+
+
+		private void goDownOrLeft() {
+			if (!onLastRow()) {
+			    if (isWarrayCellBelowOccupied())
+			        routeGoesLeft();
+			    else
+			    	eitherMakeCurrentPositionIntoRouteOrLoopSomeMore();
+			} else {
+			    if (routeWantsToGoDown) {
+			        routeGoesLeft();
+			    } else {
+			        routeWantsToGoUp = true;
+			        eitherMakeCurrentPositionIntoRouteOrLoopSomeMore();
+			    }
+			}
+		}
+
+
+		private void routeGoesRight() {
+			trackInWarrayRightOfCurrent();
+			
+			if (vArray[currentColumn][currentRow] == DEAD_END) {
+			    vArray[currentColumn][currentRow] = PASSAGE;
+			} else {
+			    vArray[currentColumn][currentRow] = CORNER;
+			}
+
+			currentColumn++;
+
+			if (!hasFilledAllCells()) {
+				moveCursorAbout();
+			}
+		}
+
+
 		private void moveCursor430() {
 			if (onLastColumn())
-			    nextState(530);
+				goDownOrLeft();
 			else
 			    nextState(440);
 		}
@@ -294,10 +309,10 @@ public class Amazing {
 			            else
 			                nextState(680);
 			        } else {
-			            if (someOtherDecision) {
+			            if (routeWantsToGoDown) {
 			            	decisionPoint700();
 			            } else {
-			                findNextCursorPointWhenMakingCurrentIntoRoute = true;
+			                routeWantsToGoUp = true;
 			                nextState(680);
 			            }
 			        }
@@ -306,30 +321,26 @@ public class Amazing {
 		}
 
 
-		private void makeCurrentPositionIntoRoute() {
-			if (findNextCursorPointWhenMakingCurrentIntoRoute) {
-				findNextCursorPointWhenMakingCurrentIntoRoute = false;
-				someOtherDecision= true;
-			    if (vArray[currentColumn][currentRow] == 0) {
-			        vArray[currentColumn][currentRow] = 1;
+		private void routeTurnsToGoDown() {
+			if (routeWantsToGoUp) {
+				routeWantsToGoUp = false;
+				routeWantsToGoDown= true;
+			    if (vArray[currentColumn][currentRow] == DEAD_END) {
+			        vArray[currentColumn][currentRow] = UP_OR_DOWN;
 			        
 			        currentColumn = 1;
 			        currentRow = 1;
 			        findNonBlankWarrayLocationThenStartLooping();
 			    } else {
-			        vArray[currentColumn][currentRow] = 3;
+			        vArray[currentColumn][currentRow] = CORNER;
 
-			        goToNextCellLocationWithWrappingThenFindNonBlankWarrayLocation();
+			        findPointOnRouteAfterCurrent();
 			    }
 			} else {
-			    trackInWarrayBelowCurrent();
-			    if (vArray[currentColumn][currentRow] == 0) {
-			        vArray[currentColumn][currentRow] = 1;
-			    } else {
-			        vArray[currentColumn][currentRow] = 3;
-			    }
 			    
-			    currentRow++;
+				routeGoesDown();
+			    
+
 			    if (!hasFilledAllCells()) {
 			    	// continue;
 			        startLooping();
@@ -337,13 +348,23 @@ public class Amazing {
 			}
 		}
 
+		private void routeGoesDown() {
+			trackInWarrayBelowCurrent();
+			if (vArray[currentColumn][currentRow] == DEAD_END) {
+			    vArray[currentColumn][currentRow] = UP_OR_DOWN;
+			} else {
+			    vArray[currentColumn][currentRow] = CORNER;
+			}
+		    currentRow++;
+		}
 
-		private void wallToTheLeftAndContinue() {
+
+		private void routeGoesLeft() {
 			trackInWarrayLeftOfCurrent();
-            vArray[currentColumn - 1][currentRow] = 2;
+            vArray[currentColumn - 1][currentRow] = PASSAGE;
             currentColumn--;
             if (!hasFilledAllCells()) {
-                findNextCursorPointWhenMakingCurrentIntoRoute = false;
+                routeWantsToGoUp = false;
                 // continue
     	        startLooping();
             }
@@ -387,17 +408,17 @@ public class Amazing {
 
 		private void do1090orWriteCintoWarrayAndProceed() {
 			if (randomChoiceOfThree() == 2)
-				makeCurrentPositionIntoRoute();
+				routeTurnsToGoDown();
 			else
-				trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
+				routeGoesUp();
 		}
 
 
 		private void eitherMakeCurrentPositionIntoRouteOrLoopSomeMore() {
 			if (randomChoiceOfThree() == 2)
-				makeCurrentPositionIntoRoute();
+				routeTurnsToGoDown();
 			else
-			    wallToTheLeftAndContinue();
+			    routeGoesLeft();
 		}
 
 
@@ -418,9 +439,9 @@ public class Amazing {
 		private void decisionPoint700() {
 			int x = randomChoiceOfThree();
 			if (x == 1)
-				trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
+				routeGoesUp();
 			else if (x == 2)
-			    nextState(1020);
+				routeGoesRight();
 			else
 			    nextState(720);
 		}
@@ -447,17 +468,17 @@ public class Amazing {
 
 
 		private void addRouteToMazeAboveCursorAndDecideWhetherToStop() {
-			vArray[currentColumn][currentRow - 1] = 1;
+			vArray[currentColumn][currentRow - 1] = UP_OR_DOWN;
 			currentRow--;
 			if (!hasFilledAllCells()) {
-				findNextCursorPointWhenMakingCurrentIntoRoute = false;
+				routeWantsToGoUp = false;
 			    // continue
 			    startLooping();
 			}
 		}
 
 
-		private void trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish() {
+		private void routeGoesUp() {
 			trackCellIdInWArray(currentColumn, currentRow - 1);
 			addRouteToMazeAboveCursorAndDecideWhetherToStop();
 		}
@@ -465,9 +486,9 @@ public class Amazing {
 		private void decisionPoint410() {
 			int x = randomChoiceOfThree();
 			if (x == 1)
-			    wallToTheLeftAndContinue();
+			    routeGoesLeft();
 			else if (x == 2)
-				trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
+				routeGoesUp();
 			else
 				moveCursor430();
 		}
@@ -489,7 +510,7 @@ public class Amazing {
 		}
 
 
-		private void goToNextCellLocationWithWrappingThenFindNonBlankWarrayLocation() {
+		private void findPointOnRouteAfterCurrent() {
 			goToNextCellLocationWithWrapping();
 			findNonBlankWarrayLocationThenStartLooping();
 		}
@@ -558,7 +579,15 @@ public class Amazing {
         int entrance = generateRandom(width);
 
         printTopLine(width, entrance);
-        printMazeInnards(width, height, generateMaze(width, height, entrance));
+        int[][] maze = generateMaze(width, height, entrance);
+        printMazeInnards(width, height, maze);
+       
+        for(int row=1; row<=height; row++) {
+	        for(int col=1; col<=width; col++) {
+	        	System.out.print(maze[col][row]);
+	        }
+	        System.out.println();
+        }
     }
 
 	private static int[][] generateMaze(int width, int height, int entrance) {
@@ -584,7 +613,7 @@ public class Amazing {
             print(LEFT_BORDER);
 
             for (int i = 1; i <= height; i++) {
-                if (maze[i][j] >= 2) {
+                if (maze[i][j] == PASSAGE || maze[i][j] == CORNER) {
                     print(GAP);
                 } else {
                     print(GAP_THEN_BORDER);
@@ -598,7 +627,7 @@ public class Amazing {
 
 	private static void printSeparatorLine(int width, int[][] maze, int row) {
 		for (int col = 1; col <= width; col++) {
-		    if (maze[col][row] == 0 || maze[col][row] == 2) {
+		    if (maze[col][row] == DEAD_END || maze[col][row] == PASSAGE) {
 		        print(CLOSED_WALL);
 		    } else {
 		        print(OPENING);
