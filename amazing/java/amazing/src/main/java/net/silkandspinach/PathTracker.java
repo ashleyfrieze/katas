@@ -18,7 +18,7 @@ public class PathTracker {
     int cellBeingFilled;
 
 	public PathTracker(int width, int height, int entrance) {
-        pathTaken = Amazing.constructBlankMaze1BasedArray(width, height);
+        pathTaken = ArrayHelper.constructBlankMaze1BasedArray(width, height);
 		
 		cellBeingFilled = 1;
         pathTaken[entrance][1] = cellBeingFilled;

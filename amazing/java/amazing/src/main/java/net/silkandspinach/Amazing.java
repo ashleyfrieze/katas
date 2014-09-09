@@ -11,8 +11,6 @@ package net.silkandspinach;
 import java.util.Random;
 
 public class Amazing {
-
-	
     private static Random random = new Random(0);
     
     
@@ -47,27 +45,15 @@ public class Amazing {
         	width = 0;
         	height = 0;
         } else {
-	        entrance = generateRandom(width);
-	        maze = generateMaze(width, height, entrance);
+    		MazeGenerator generator = new MazeGenerator(width, height, createRandomGeneratorObject());
+    		generator.generate();
+    		maze = generator.getMazeRoute();
+    		entrance = generator.getEntrance();
         }
 
         return new MazeOutputter(maze, width, height, entrance).toString();
 
     }
-
-	private static int[][] generateMaze(int width, int height, int entrance) {
-		MazeGenerator generator = new MazeGenerator(width, height, entrance, createRandomGeneratorObject());
-		generator.generate();
-		return generator.getMazeRoute();
-	}
-
-	static int[][] constructBlankMaze1BasedArray(int width, int height) {
-		int[][] array = new int[width + 1][height + 1];
-        for (int i = 0; i <= width; i++) {
-            array[i] = new int[height + 1];
-        }
-		return array;
-	}
 
 	private static boolean tooSmall(int h, int v) {
 		return h <= 1 || v <= 1;

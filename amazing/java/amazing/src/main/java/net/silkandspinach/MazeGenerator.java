@@ -7,9 +7,8 @@ public class MazeGenerator {
 	static final int PASSAGE = 2;
 	static final int CORNER = 3;
 	
-	private static int nextState = 0;      // where GOTO goes
-	
 	private int[][] mazeRoute;
+	private final int entrance;
 	
 	private boolean routeWantsToGoUp;
 	private boolean routeWantsToGoDown;
@@ -17,11 +16,13 @@ public class MazeGenerator {
 	private PathTracker pathTracker;
 	private RandomGenerator randomGenerator;
     
-	public MazeGenerator(int width, int height, int entrance, RandomGenerator randomGenerator) {
-		pathTracker = new PathTracker(width, height, entrance);
+	public MazeGenerator(int width, int height, RandomGenerator randomGenerator) {
 		this.randomGenerator = randomGenerator;
+		entrance = randomGenerator.generateRandom(width);
 		
-        mazeRoute = Amazing.constructBlankMaze1BasedArray(width, height);
+		pathTracker = new PathTracker(width, height, entrance);
+		
+        mazeRoute = ArrayHelper.constructBlankMaze1BasedArray(width, height);
 
         routeWantsToGoUp = false;
         routeWantsToGoDown = false;
@@ -30,24 +31,31 @@ public class MazeGenerator {
     public int[][] getMazeRoute() {
     	return mazeRoute;
     }
+    
+    public int getEntrance() {
+    	return entrance;
+    }
 	
     public void generate() {
         while (!pathTracker.hasFilledAllCells()) {
             if (pathTracker.cannotGoLeft()) {
 				moveCursorAbout();
-			} else {
-			    if (pathTracker.cannotGoUp()) {
-					workOutNextStepsWhileFacingDownwards();
-			    } else {
-			        if (pathTracker.cannotGoRight()) {
-			        	goAnyDirectionPossible();
-			        } else {
-			            if (!selectAStandardRoute()) {
-			            	goAnyDirectionPossible();
-			            }
-			        }
-			    }
-			}        	
+				continue;
+			} 
+
+		    if (pathTracker.cannotGoUp()) {
+				workOutNextStepsWhileFacingDownwards();
+				continue;
+		    } 
+
+	        if (pathTracker.cannotGoRight()) {
+	        	goAnyDirectionPossible();
+	        	continue;
+	        } 
+
+            if (!selectedLeftUpOrRight()) {
+            	goAnyDirectionPossible();
+            }
         }
     }
 
@@ -59,7 +67,7 @@ public class MazeGenerator {
 			if (pathTracker.onLastRow()) {
 		        routeWantsToGoUp = true;
 			}
-		    selectLeftUpForcedDownOrAnything();
+		    selectAnyDirectionButRight();
 		}
 	}
 
@@ -68,9 +76,9 @@ public class MazeGenerator {
 			if ((!pathTracker.onLastRow() && pathTracker.isGoingDownImpossible()) 
 					|| (pathTracker.onLastRow() && routeWantsToGoDown)) {
 				pathTracker.goToNextCellLocationWithWrapping();
-				findPointOnRouteThenStartLooping();
+				pathTracker.moveToNextPointOnRoute();
 			} else {
-			    goDownAndForceDownwardRoute();
+			    goDownForcingDownwardRoute();
 			} 
 		} else {
 		    if (!pathTracker.onLastRow()) {
@@ -83,55 +91,12 @@ public class MazeGenerator {
 		        if (routeWantsToGoDown) {
 		        	routeGoesRight();
 		        } else {
-					pathTracker.incrementCell();
-		            addRouteToMazeAboveCursorAndKeepLooping();
+					routeGoesUp(false);
 		        }
 		    }
 		    
 		}
 	}
-
-	private void selectLeftUpForcedDownOrAnything() {
-		int x = randomChoiceOfFour();
-		if (x == 1)
-		    routeGoesLeft();
-		else if (x == 2)
-			routeGoesUp();
-		else if (x == 3)
-		    goDownAndForceDownwardRoute();
-		else
-			selectLeftUpOrDown();
-	}
-
-	private boolean selectAStandardRoute() {
-		int x = randomChoiceOfFour();
-
-		if (x == 1) {
-		    routeGoesLeft();
-		} else if (x == 2) {
-			routeGoesUp();
-		} else if (x == 3) {
-			routeGoesRight();
-		} else {
-		    return false;
-		}
-		
-		return true;
-	}
-
-
-	private void selectAnyDirection() {
-		int x = randomChoiceOfFour();
-		if (x == 1)
-			routeGoesUp();
-		else if (x == 2)
-			routeGoesRight();
-		else if (x == 3)
-			goDownAndForceDownwardRoute();
-		else
-			selectUpRightDownOrReturnUp();
-	}
-
 
 	private void moveDownIfPossibleOrReverse() {
 		if (pathTracker.onLastRow()) {
@@ -155,43 +120,140 @@ public class MazeGenerator {
 
 	private void selectDownOrRight() {
 		if (randomChoiceOfThree() == 2) {
-			goDownAndForceDownwardRoute();
+			goDownForcingDownwardRoute();
 		} else {
 			routeGoesRight();
 		}
 	}
 
 	private void selectLeftRightOrDownOrFaceDown() {
-		int x = randomChoiceOfFour();
-		if (x == 1)
-		    routeGoesLeft();
-		else if (x == 2)
-			routeGoesRight();
-		else if (x == 3)
-			goDownAndForceDownwardRoute();
-		else
-			selectLeftRightOrDown();
+		switch(randomChoiceOfFour()) {
+			case 1:
+				routeGoesLeft();
+				break;
+			case 2:
+				routeGoesRight();
+				break;
+			case 3:
+				goDownForcingDownwardRoute();
+				break;
+			default:
+				selectLeftRightOrDown();
+				break;
+		}
 	}
 
 
 	private void selectLeftRightOrDown() {
+		switch(randomChoiceOfThree()) {
+			case 1:
+				routeGoesLeft();
+				break;
+			case 2:
+				routeGoesRight();
+				break;
+			default:
+				goDownOrLeft();
+				break;
+		}
+	}
+
+
+	private void selectAnyDirectionButRight() {
+		switch(randomChoiceOfFour()) {
+			case 1:
+			    routeGoesLeft();
+			    break;
+			case 2:
+				routeGoesUp();
+				break;
+			case 3:
+				goDownForcingDownwardRoute();
+				break;
+			default:
+				selectLeftUpOrDown();
+				break;
+		}
+	}
+
+	private boolean selectedLeftUpOrRight() {
+		switch(randomChoiceOfFour()) {
+			case 1:
+			    routeGoesLeft();
+			    break;
+			case 2:
+				routeGoesUp();
+				break;
+			case 3:
+				routeGoesRight();
+				break;
+			default:
+				return false;
+		}
+		
+		return true;
+	}
+
+
+	private void selectAnyDirectionButLeft() {
+		switch(randomChoiceOfFour()) {
+			case 1:
+				routeGoesUp();
+				break;
+			case 2:
+				routeGoesRight();
+				break;
+			case 3:
+				goDownForcingDownwardRoute();
+				break;
+			default:
+				selectUpRightDownOrReturnUp();
+		}
+	}
+	
+	
+	private void selectLeftUpOrDown() {
+		switch (randomChoiceOfThree()) {
+			case 1:
+				routeGoesLeft();
+				break;
+			case 2:
+				routeGoesUp();
+				break;
+			default:
+				workOutNextStepsWhileFacingDownwards();
+				break;
+		}
+	}
+	
+
+
+	private void selectUpOrDown() {
+		if (randomChoiceOfThree() == 2) {
+			goDownForcingDownwardRoute();
+		} else {
+			routeGoesUp();
+		}
+	}
+
+
+	private void selectDownOrLeft() {
+		if (randomChoiceOfThree() == 2) {
+			goDownForcingDownwardRoute();
+		} else {
+		    routeGoesLeft();
+		}
+	}
+
+
+	private void selectUpRightDownOrReturnUp() {
 		int x = randomChoiceOfThree();
 		if (x == 1)
-		    routeGoesLeft();
+			routeGoesUp();
 		else if (x == 2)
 			routeGoesRight();
 		else
-			goDownOrLeft();
-	}
-
-	private void selectLeftUpOrDown() {
-		int x = randomChoiceOfThree();
-		if (x == 1)
-		    routeGoesLeft();
-		else if (x == 2)
-			routeGoesUp();
-		else
-			workOutNextStepsWhileFacingDownwards();
+			moveDownIfPossibleOrReverse();
 	}
 	
 	private void goDownOrLeft() {
@@ -261,33 +323,35 @@ public class MazeGenerator {
 	private void moveCursorAbout() {
 		if (pathTracker.cannotGoUp()) {
 			goRightOrDown();
-		} else {
-		    if (pathTracker.cannotGoRight()) {
-		    	moveDownIfPossibleOrReverse();
-		    } else {
-		        if (!pathTracker.onLastRow()) {
-		            if (pathTracker.isGoingDownImpossible())
-		            	selectUpRightDownOrReturnUp();
-		            else
-		            	selectAnyDirection();
-		        } else {
-		            if (routeWantsToGoDown) {
-		            	selectUpRightDownOrReturnUp();
-		            } else {
-		                routeWantsToGoUp = true;
-		                selectAnyDirection();
-		            }
-		        }
-		    }
-		}
+			return;
+		} 
+
+	    if (pathTracker.cannotGoRight()) {
+	    	moveDownIfPossibleOrReverse();
+	    	return;
+	    } 
+
+        if (!pathTracker.onLastRow()) {
+            if (pathTracker.isGoingDownImpossible()) {
+            	selectUpRightDownOrReturnUp();
+            } else {
+            	selectAnyDirectionButLeft();
+            }
+        } else {
+            if (routeWantsToGoDown) {
+            	selectUpRightDownOrReturnUp();
+            } else {
+                routeWantsToGoUp = true;
+                selectAnyDirectionButLeft();
+            }
+        }
 	}
 
 
-	private void goDownAndForceDownwardRoute() {
+	private void goDownForcingDownwardRoute() {
 		if (routeWantsToGoUp) {
 			forceDownwardRoute();
 		} else {
-		    
 			routeGoesDown();
 		}
 	}
@@ -300,14 +364,12 @@ public class MazeGenerator {
 			pathTracker.setCurrentCellValue(mazeRoute, UP_OR_DOWN);
 		    
 		    pathTracker.moveBackToFirstCell();
-		    
-		    findPointOnRouteThenStartLooping();
 		} else {
 			pathTracker.setCurrentCellValue(mazeRoute, CORNER);
-
 		    pathTracker.goToNextCellLocationWithWrapping();
-			findPointOnRouteThenStartLooping();
 		}
+		
+	    pathTracker.moveToNextPointOnRoute();
 	}
 
 	private void routeGoesDown() {
@@ -332,55 +394,25 @@ public class MazeGenerator {
 	}
 
 
-
-	private void selectUpOrDown() {
-		if (randomChoiceOfThree() == 2)
-			goDownAndForceDownwardRoute();
-		else
-			routeGoesUp();
+	private void routeGoesUp() {
+		routeGoesUp(true);
 	}
 
-
-	private void selectDownOrLeft() {
-		if (randomChoiceOfThree() == 2)
-			goDownAndForceDownwardRoute();
-		else
-		    routeGoesLeft();
-	}
-
-
-	private void findPointOnRouteThenStartLooping() {
-		pathTracker.moveToNextPointOnRoute();
-	}
-
-
-	private void selectUpRightDownOrReturnUp() {
-		int x = randomChoiceOfThree();
-		if (x == 1)
-			routeGoesUp();
-		else if (x == 2)
-			routeGoesRight();
-		else
-			moveDownIfPossibleOrReverse();
-	}
-
-	private void addRouteToMazeAboveCursorAndKeepLooping() {
+	/**
+	 * Route goes up and we're either tracking it, or skipping the tracking
+	 * @param track
+	 */
+	private void routeGoesUp(boolean track) {
+		if (track) { 
+			pathTracker.trackAboveCurrent();
+		} else {
+			pathTracker.incrementCell();
+		}
+		
 		pathTracker.decrementRow();
 		pathTracker.setCurrentCellValue(mazeRoute, UP_OR_DOWN);
 		routeWantsToGoUp = false;
-	}
+	}	
 
-
-	private void routeGoesUp() {
-		pathTracker.trackAboveCurrent();
-		
-		addRouteToMazeAboveCursorAndKeepLooping();
-	}
-
-
-
-	public static void nextState(int lineno) {
-        nextState = lineno;
-    }
 }
 
