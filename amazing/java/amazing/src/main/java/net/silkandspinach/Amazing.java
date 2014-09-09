@@ -21,9 +21,6 @@ public class Amazing {
 	
     private static Random random = new Random(0);
     private static StringBuffer result = new StringBuffer();
-
-    // STATES
-    private static final int STATE_FINISHED = 1200;
     
     static class MazeGenerator {
     	private static int nextState = 0;      // where GOTO goes
@@ -67,11 +64,11 @@ public class Amazing {
         
         int[][] generate() {
 	        startLooping();
-	        while (nextState != STATE_FINISHED) {
+	        while (!hasFilledAllCells()) {
 	
 				switch (nextState) {
 	                case 330: {
-	                    int x = generateRandom(3);
+	                    int x = randomChoiceOfFour();
 	
 	                    if (x == 1)
 	                        wallToTheLeftAndContinue();
@@ -83,19 +80,10 @@ public class Amazing {
 	                        nextState(350);
 	                    break;
 	                }
-	                case 350:
-	                	if ((!onLastRow() && isWarrayCellBelowOccupied())||onLastRow() && someOtherDecision) {
-	                		decisionPoint410();
-	                	} else {
-	                		if (onLastRow()) {
-	                            findNextCursorPointWhenMakingCurrentIntoRoute = true;
-	                		}
-	                		nextState(390);
-	                	}
-	                    break;
-	
+	                
+	            	
 	                case 390: {
-	                    int x = generateRandom(3);
+	                    int x = randomChoiceOfFour();
 	                    if (x == 1)
 	                        wallToTheLeftAndContinue();
 	                    else if (x == 2)
@@ -107,12 +95,45 @@ public class Amazing {
 	                    break;
 	                }
 
-	                case 430:
-	                    if (onLastColumn())
-	                        nextState(530);
+	                case 490: {
+	                    int x = randomChoiceOfFour();
+	                    if (x == 1)
+	                        wallToTheLeftAndContinue();
+	                    else if (x == 2)
+	                        nextState(1020);
+	                    else if (x == 3)
+	                    	makeCurrentPositionIntoRoute();
 	                    else
-	                        nextState(440);
+	                        nextState(510);
 	                    break;
+	                }
+	                
+
+	                case 680: {
+	                    int x = randomChoiceOfFour();
+	                    if (x == 1)
+	                    	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
+	                    else if (x == 2)
+	                        nextState(1020);
+	                    else if (x == 3)
+	                    	makeCurrentPositionIntoRoute();
+	                    else
+	                    	decisionPoint700();
+	                    break;
+	                }
+	                
+	                
+	                case 350:
+	                	if ((!onLastRow() && isWarrayCellBelowOccupied())||onLastRow() && someOtherDecision) {
+	                		decisionPoint410();
+	                	} else {
+	                		if (onLastRow()) {
+	                            findNextCursorPointWhenMakingCurrentIntoRoute = true;
+	                		}
+	                		nextState(390);
+	                	}
+	                    break;
+
 	                case 440:
 	                    if (isWarrayCellToRightOccupied()) {
 	                        nextState(530);
@@ -132,20 +153,9 @@ public class Amazing {
 	                        }
 	                    }
 	                    break;
-	                case 490: {
-	                    int x = generateRandom(3);
-	                    if (x == 1)
-	                        wallToTheLeftAndContinue();
-	                    else if (x == 2)
-	                        nextState(1020);
-	                    else if (x == 3)
-	                    	makeCurrentPositionIntoRoute();
-	                    else
-	                        nextState(510);
-	                    break;
-	                }
+
 	                case 510: {
-	                    int x = generateRandom(2);
+	                    int x = randomChoiceOfThree();
 	                    if (x == 1)
 	                        wallToTheLeftAndContinue();
 	                    else if (x == 2)
@@ -170,18 +180,6 @@ public class Amazing {
 	                    }
 	                    break;
 
-	                case 680: {
-	                    int x = generateRandom(3);
-	                    if (x == 1)
-	                    	trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
-	                    else if (x == 2)
-	                        nextState(1020);
-	                    else if (x == 3)
-	                    	makeCurrentPositionIntoRoute();
-	                    else
-	                    	decisionPoint700();
-	                    break;
-	                }
 	                case 720:
 	                    if (!onLastRow()) {
 	                        if (isWarrayCellBelowOccupied()) {
@@ -218,7 +216,7 @@ public class Amazing {
                                 if (isWarrayCellBelowOccupied()) {
                                     nextState(1020);
                                 } else {
-            	                    if (generateRandom(2) == 2) {
+            	                    if (randomChoiceOfThree() == 2) {
             	                    	makeCurrentPositionIntoRoute();
             	                    } else {
 									    nextState(1020);
@@ -248,10 +246,9 @@ public class Amazing {
 	
 	                    currentColumn++;
 	
-	                    if (hasFilledAllCells())
-	                        nextState(STATE_FINISHED);
-	                    else
+	                    if (!hasFilledAllCells()) {
 	                    	moveCursorAbout();
+	                    }
 	                    break;
 	
 
@@ -264,6 +261,24 @@ public class Amazing {
 	        
 	        return vArray;
 	    }
+
+
+		private void moveCursor430() {
+			if (onLastColumn())
+			    nextState(530);
+			else
+			    nextState(440);
+		}
+
+
+		private int randomChoiceOfFour() {
+			return generateRandom(3);
+		}
+
+
+		private int randomChoiceOfThree() {
+			return generateRandom(2);
+		}
 
 
 		private void moveCursorAbout() {
@@ -315,9 +330,7 @@ public class Amazing {
 			    }
 			    
 			    currentRow++;
-			    if (hasFilledAllCells()) {
-			        nextState(STATE_FINISHED);
-			    } else {
+			    if (!hasFilledAllCells()) {
 			    	// continue;
 			        startLooping();
 			    }
@@ -329,9 +342,7 @@ public class Amazing {
 			trackInWarrayLeftOfCurrent();
             vArray[currentColumn - 1][currentRow] = 2;
             currentColumn--;
-            if (hasFilledAllCells()) {
-                nextState(STATE_FINISHED);
-            } else {
+            if (!hasFilledAllCells()) {
                 findNextCursorPointWhenMakingCurrentIntoRoute = false;
                 // continue
     	        startLooping();
@@ -375,7 +386,7 @@ public class Amazing {
 
 
 		private void do1090orWriteCintoWarrayAndProceed() {
-			if (generateRandom(2) == 2)
+			if (randomChoiceOfThree() == 2)
 				makeCurrentPositionIntoRoute();
 			else
 				trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
@@ -383,7 +394,7 @@ public class Amazing {
 
 
 		private void eitherMakeCurrentPositionIntoRouteOrLoopSomeMore() {
-			if (generateRandom(2) == 2)
+			if (randomChoiceOfThree() == 2)
 				makeCurrentPositionIntoRoute();
 			else
 			    wallToTheLeftAndContinue();
@@ -405,7 +416,7 @@ public class Amazing {
 
 
 		private void decisionPoint700() {
-			int x = generateRandom(2);
+			int x = randomChoiceOfThree();
 			if (x == 1)
 				trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 			else if (x == 2)
@@ -438,9 +449,7 @@ public class Amazing {
 		private void addRouteToMazeAboveCursorAndDecideWhetherToStop() {
 			vArray[currentColumn][currentRow - 1] = 1;
 			currentRow--;
-			if (hasFilledAllCells()) {
-			    nextState(STATE_FINISHED);
-			} else {
+			if (!hasFilledAllCells()) {
 				findNextCursorPointWhenMakingCurrentIntoRoute = false;
 			    // continue
 			    startLooping();
@@ -454,13 +463,13 @@ public class Amazing {
 		}
 
 		private void decisionPoint410() {
-			int x = generateRandom(2);
+			int x = randomChoiceOfThree();
 			if (x == 1)
 			    wallToTheLeftAndContinue();
 			else if (x == 2)
 				trackInWarrayAboveCurrentUpdateMazeAndDecideWhetherToFinish();
 			else
-			    nextState(430);
+				moveCursor430();
 		}
 
 		private void startLooping() {
@@ -468,7 +477,7 @@ public class Amazing {
 				moveCursorAbout();
 			} else {
 		        if (onFirstRow() || isWarrayCellAboveOccupied()) {
-		            nextState(430);
+					moveCursor430();
 		        } else {
 	                if (onLastColumn() || isWarrayCellToRightOccupied()) {
 	                    nextState(350);
