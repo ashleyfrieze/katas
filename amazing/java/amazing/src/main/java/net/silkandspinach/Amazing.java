@@ -11,21 +11,13 @@ package net.silkandspinach;
 import java.util.Random;
 
 public class Amazing {
-
-	private static final String GAP_THEN_BORDER = "  I";
-	private static final String GAP = "   ";
-	private static final String LEFT_BORDER = "I";
-	private static final String CLOSED_WALL = ":--";
-	private static final String OPENING = ":  ";
-	private static final String RIGHT_WALL = ":";
-	
-	private static final int DEAD_END = 0;
-	private static final int UP_OR_DOWN = 1;
-	private static final int PASSAGE = 2;
-	private static final int CORNER = 3;
+	// package scope so they can be used by the maze outputter
+	static final int DEAD_END = 0;
+	static final int UP_OR_DOWN = 1;
+	static final int PASSAGE = 2;
+	static final int CORNER = 3;
 	
     private static Random random = new Random(0);
-    private static StringBuffer result = new StringBuffer();
     
     static class MazeGenerator {
     	private static int nextState = 0;      // where GOTO goes
@@ -429,52 +421,31 @@ public class Amazing {
     
     public static String buildMaze(Random randomGenerator, int horizontal, int vertical) {
     	random = randomGenerator;
-    	constructAndOutputMaze(horizontal, vertical);
-    	return result.toString();
+    	return constructAndOutputMaze(horizontal, vertical);
     }
     
     public static void main(String[] args) {
-        constructAndOutputMaze(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
-        System.out.println(result);
-    }
-
-    private static void clear() {
-        result.setLength(0);
-    }
-
-    private static void printNewline() {
-        result.append("\n");
-    }
-
-    public static void print(String text) {
-        result.append(text);
+    	System.out.println(constructAndOutputMaze(Integer.parseInt(args[0]),Integer.parseInt(args[1])));
     }
 
     public static int generateRandom(int count) {
         return (int) (count * random.nextFloat()) + 1;
     }
 
-    private static void constructAndOutputMaze(int width, int height) {
-        clear();
-        print("Amazing - Copyright by Creative Computing, Morristown, NJ");
-        printNewline();
-
+    private static String constructAndOutputMaze(int width, int height) {
+    	int[][] maze = null;
+    	int entrance = 0;
+    	
         if (tooSmall(width, height)) {
-        	return;
+        	width = 0;
+        	height = 0;
+        } else {
+	        entrance = generateRandom(width);
+	        maze = generateMaze(width, height, entrance);
         }
 
-        int entrance = generateRandom(width);
+        return new MazeOutputter(maze, width, height, entrance).toString();
 
-        printTopLine(width, entrance);
-        int[][] maze = generateMaze(width, height, entrance);
-        printMazeInnards(width, height, maze);
-       
-        for(int row=1; row<=height; row++) {
-	        for(int col=1; col<=width; col++) {
-	        	System.out.print(maze[col][row]);
-	        }
-	        System.out.println();
-        }
     }
 
 	private static int[][] generateMaze(int width, int height, int entrance) {
@@ -495,45 +466,4 @@ public class Amazing {
 		return h <= 1 || v <= 1;
 	}
 
-	private static void printMazeInnards(int height, int width, int[][] maze) {
-		for (int j = 1; j <= width; j++) {
-            print(LEFT_BORDER);
-
-            for (int i = 1; i <= height; i++) {
-                if (maze[i][j] == PASSAGE || maze[i][j] == CORNER) {
-                    print(GAP);
-                } else {
-                    print(GAP_THEN_BORDER);
-                }
-            }
-            printNewline();
-
-            printSeparatorLine(height, maze, j);
-        }
-	}
-
-	private static void printSeparatorLine(int width, int[][] maze, int row) {
-		for (int col = 1; col <= width; col++) {
-		    if (maze[col][row] == DEAD_END || maze[col][row] == PASSAGE) {
-		        print(CLOSED_WALL);
-		    } else {
-		        print(OPENING);
-		    }
-		}
-
-		print(RIGHT_WALL);    // 1360
-		printNewline();
-	}
-
-	private static void printTopLine(int width, int entrance) {
-        for (int i = 1; i <= width; i++) {
-            if (i == entrance)
-                print(OPENING);
-            else
-                print(CLOSED_WALL);
-        }
-        
-        print(RIGHT_WALL);
-        printNewline();
-	}
 }
