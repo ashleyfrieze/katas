@@ -30,46 +30,29 @@ public class Amazing {
     static class MazeGenerator {
     	private static int nextState = 0;      // where GOTO goes
     	
-    	private int[][] wArray;
-    	private int[][] vArray;
-    	final int mazeSize;
+    	private int[][] mazeRoute;
     	
         boolean routeWantsToGoUp;
         boolean routeWantsToGoDown;
         
-        int cellBeingFilled;
-
-        int currentColumn;
-        int currentRow;
+        PathTracker pathTracker;
         
-        int width;
-        int height;
-    	
     	MazeGenerator(int width, int height, int entrance) {
-    		this.width = width;
-    		this.height = height;
+    		pathTracker = new PathTracker(width, height, entrance);
     		
-	        wArray = constructBlankMaze1BasedArray(width, height);
-	        vArray = constructBlankMaze1BasedArray(width, height);
-	        
-	        mazeSize = width * height;
+	        mazeRoute = constructBlankMaze1BasedArray(width, height);
+
 	        
 	        routeWantsToGoUp = false;
 	        routeWantsToGoDown = false;
 	        
-	        cellBeingFilled = 1;
-	        wArray[entrance][1] = cellBeingFilled;
-	        cellBeingFilled++;
-	
-	        currentColumn = entrance;
-	        currentRow = 1;
 
     	}
 
         
         int[][] generate() {
 	        startLooping();
-	        while (!hasFilledAllCells()) {
+	        while (!pathTracker.hasFilledAllCells()) {
 	
 				switch (nextState) {
 	                case 330: {
@@ -87,10 +70,11 @@ public class Amazing {
 	                }
 	                
 	                case 350:
-	                	if ((!onLastRow() && isGoingDownImpossible())||onLastRow() && routeWantsToGoDown) {
+	                	if ((!pathTracker.onLastRow() && pathTracker.isGoingDownImpossible())
+	                			||pathTracker.onLastRow() && routeWantsToGoDown) {
 	                		selectLeftUpOrDown();
 	                	} else {
-	                		if (onLastRow()) {
+	                		if (pathTracker.onLastRow()) {
 	                            routeWantsToGoUp = true;
 	                		}
 		                    int x = randomChoiceOfFour();
@@ -107,16 +91,17 @@ public class Amazing {
 
 
 	                case 790:
-	                    if (onLastColumn() || isWarrayCellToRightOccupied()) {
-	                    	if ((!onLastRow() && isGoingDownImpossible()) || (onLastRow() && routeWantsToGoDown)) {
-								goToNextCellLocationWithWrapping();
+	                    if (pathTracker.cannotGoRight()) {
+	                    	if ((!pathTracker.onLastRow() && pathTracker.isGoingDownImpossible()) 
+	                    			|| (pathTracker.onLastRow() && routeWantsToGoDown)) {
+								pathTracker.goToNextCellLocationWithWrapping();
 								findPointOnRouteThenStartLooping();
 							} else {
 							    goDownAndForceDownwardRoute();
 							} 
 	                    } else {
-                            if (!onLastRow()) {
-                                if (isGoingDownImpossible()) {
+                            if (!pathTracker.onLastRow()) {
+                                if (pathTracker.isGoingDownImpossible()) {
                                 	routeGoesRight();
                                 } else {
             	                    selectDownOrRight();
@@ -125,7 +110,7 @@ public class Amazing {
                                 if (routeWantsToGoDown) {
                                 	routeGoesRight();
                                 } else {
-                        			cellBeingFilled++;
+                        			pathTracker.incrementCell();
                                     addRouteToMazeAboveCursorAndKeepLooping();
                                 }
                             }
@@ -141,7 +126,7 @@ public class Amazing {
 	
 	        }
 	        
-	        return vArray;
+	        return mazeRoute;
 	    }
 
 
@@ -159,7 +144,7 @@ public class Amazing {
 
 
 		private void moveDownIfPossibleOrReverse() {
-			if (onLastRow()) {
+			if (pathTracker.onLastRow()) {
 			    if (routeWantsToGoDown) {
 			    	routeGoesUp();
 			    } else {
@@ -168,7 +153,7 @@ public class Amazing {
 			    }
 
 			} else {
-			    if (isGoingDownImpossible()) {
+			    if (pathTracker.isGoingDownImpossible()) {
 			    	routeGoesUp();
 			    } else {
 			    	selectUpOrDown();
@@ -220,8 +205,8 @@ public class Amazing {
 		}
 		
 		private void goDownOrLeft() {
-			if (!onLastRow()) {
-			    if (isGoingDownImpossible())
+			if (!pathTracker.onLastRow()) {
+			    if (pathTracker.isGoingDownImpossible())
 			        routeGoesLeft();
 			    else
 			    	selectDownOrLeft();
@@ -237,28 +222,28 @@ public class Amazing {
 
 
 		private void routeGoesRight() {
-			trackInWarrayRightOfCurrent();
+			pathTracker.trackRightOfCurrent();
 			
-			if (vArray[currentColumn][currentRow] == DEAD_END) {
-			    vArray[currentColumn][currentRow] = PASSAGE;
+			if (pathTracker.getCurrentCellValue(mazeRoute) == DEAD_END) {
+				pathTracker.setCurrentCellValue(mazeRoute, PASSAGE);
 			} else {
-			    vArray[currentColumn][currentRow] = CORNER;
+				pathTracker.setCurrentCellValue(mazeRoute, CORNER);
 			}
 
-			currentColumn++;
+			pathTracker.incrementColumn();
 
-			if (!hasFilledAllCells()) {
+			if (!pathTracker.hasFilledAllCells()) {
 				moveCursorAbout();
 			}
 		}
 
 
 		private void workOutNextStepsWhileFacingDownwards() {
-			if (onLastColumn() || isWarrayCellToRightOccupied()) {
+			if (pathTracker.cannotGoRight()) {
 				goDownOrLeft();
 			} else {
-                if (!onLastRow()) {
-                    if (isGoingDownImpossible())
+                if (!pathTracker.onLastRow()) {
+                    if (pathTracker.isGoingDownImpossible())
                     	selectLeftRightOrDown();
                     else
                     	selectLeftRightOrDownOrFaceDown();
@@ -274,6 +259,8 @@ public class Amazing {
 		}
 
 
+
+
 		private int randomChoiceOfFour() {
 			return generateRandom(3);
 		}
@@ -285,14 +272,14 @@ public class Amazing {
 
 
 		private void moveCursorAbout() {
-			if (onFirstRow() || isWarrayCellAboveOccupied()) {
+			if (pathTracker.cannotGoUp()) {
 			    nextState(790);
 			} else {
-			    if (onLastColumn() || isWarrayCellToRightOccupied()) {
+			    if (pathTracker.cannotGoRight()) {
 			    	moveDownIfPossibleOrReverse();
 			    } else {
-			        if (!onLastRow()) {
-			            if (isGoingDownImpossible())
+			        if (!pathTracker.onLastRow()) {
+			            if (pathTracker.isGoingDownImpossible())
 			            	selectUpRightDownOrReturnUp();
 			            else
 			            	selectAnyDirection();
@@ -317,7 +304,7 @@ public class Amazing {
 				routeGoesDown();
 			    
 
-			    if (!hasFilledAllCells()) {
+			    if (!pathTracker.hasFilledAllCells()) {
 			    	// continue;
 			        startLooping();
 			    }
@@ -328,80 +315,43 @@ public class Amazing {
 		private void forceDownwardRoute() {
 			routeWantsToGoUp = false;
 			routeWantsToGoDown= true;
-			if (vArray[currentColumn][currentRow] == DEAD_END) {
-			    vArray[currentColumn][currentRow] = UP_OR_DOWN;
+			if (pathTracker.getCurrentCellValue(mazeRoute) == DEAD_END) {
+				pathTracker.setCurrentCellValue(mazeRoute, UP_OR_DOWN);
 			    
-			    currentColumn = 1;
-			    currentRow = 1;
+			    pathTracker.moveBackToFirstCell();
+			    
 			    findPointOnRouteThenStartLooping();
 			} else {
-			    vArray[currentColumn][currentRow] = CORNER;
+				pathTracker.setCurrentCellValue(mazeRoute, CORNER);
 
-			    goToNextCellLocationWithWrapping();
+			    pathTracker.goToNextCellLocationWithWrapping();
 				findPointOnRouteThenStartLooping();
 			}
 		}
 
 		private void routeGoesDown() {
-			trackInWarrayBelowCurrent();
-			if (vArray[currentColumn][currentRow] == DEAD_END) {
-			    vArray[currentColumn][currentRow] = UP_OR_DOWN;
+			pathTracker.trackBelowCurrent();
+			if (pathTracker.getCurrentCellValue(mazeRoute) == DEAD_END) {
+				pathTracker.setCurrentCellValue(mazeRoute, UP_OR_DOWN);
 			} else {
-			    vArray[currentColumn][currentRow] = CORNER;
+				pathTracker.setCurrentCellValue(mazeRoute,  CORNER);
 			}
-		    currentRow++;
+			pathTracker.incrementRow();
 		}
 
 
 		private void routeGoesLeft() {
-			trackInWarrayLeftOfCurrent();
-            vArray[currentColumn - 1][currentRow] = PASSAGE;
-            currentColumn--;
-            if (!hasFilledAllCells()) {
+			pathTracker.trackLeftOfCurrent();
+			pathTracker.decrementColumn();
+			pathTracker.setCurrentCellValue(mazeRoute, PASSAGE);
+
+            if (!pathTracker.hasFilledAllCells()) {
                 routeWantsToGoUp = false;
                 // continue
     	        startLooping();
             }
 		}
 
-
-		private boolean isWarrayCellToRightOccupied() {
-			return wArray[currentColumn + 1][currentRow] != 0;
-		}
-
-
-		private boolean onLastColumn() {
-			return currentColumn == width;
-		}
-
-
-		private boolean isWarrayCellAboveOccupied() {
-			return wArray[currentColumn][currentRow - 1] != 0;
-		}
-
-
-		private boolean onFirstRow() {
-			return currentRow - 1 == 0;
-		}
-
-
-		private boolean hasFilledAllCells() {
-			return cellBeingFilled > mazeSize;
-		}
-
-
-		private boolean isGoingDownImpossible() {
-			return onLastRow() || wArray[currentColumn][currentRow + 1] != 0;
-		}
-		
-		private boolean isGoingDownPossible() {
-			return !isGoingDownImpossible();
-		}
-
-
-		private boolean onLastRow() {
-			return currentRow == height;
-		}
 
 
 		private void selectUpOrDown() {
@@ -421,16 +371,9 @@ public class Amazing {
 
 
 		private void findPointOnRouteThenStartLooping() {
-			while (isWarrayCurrentCellBlank()) {
-				goToNextCellLocationWithWrapping();
-			} 
+			pathTracker.moveToNextPointOnRoute();
 
 		    startLooping();
-		}
-
-
-		private boolean isWarrayCurrentCellBlank() {
-			return wArray[currentColumn][currentRow] == 0;
 		}
 
 
@@ -444,55 +387,31 @@ public class Amazing {
 				moveDownIfPossibleOrReverse();
 		}
 
-		private void trackInWarrayAboveCurrent() {
-			trackCellIdInWArray(currentColumn, currentRow - 1);
-		}
-		
-		private void trackInWarrayBelowCurrent() {
-			trackCellIdInWArray(currentColumn, currentRow+1);
-		}
-
-
-		private void trackInWarrayRightOfCurrent() {
-			trackCellIdInWArray(currentColumn+1, currentRow);
-		}
-
-
-		private void trackInWarrayLeftOfCurrent() {
-			trackCellIdInWArray(currentColumn-1, currentRow);
-		}
-		
-		private void trackCellIdInWArray(int column, int row) {
-			wArray[column][row] = cellBeingFilled;
-			cellBeingFilled++;
-		}
-
-
 		private void addRouteToMazeAboveCursorAndKeepLooping() {
-			vArray[currentColumn][currentRow - 1] = UP_OR_DOWN;
-			currentRow--;
+			pathTracker.decrementRow();
+			pathTracker.setCurrentCellValue(mazeRoute, UP_OR_DOWN);
 			routeWantsToGoUp = false;
 		    startLooping();
 		}
 
 
 		private void routeGoesUp() {
-			trackInWarrayAboveCurrent();
+			pathTracker.trackAboveCurrent();
 			
 			addRouteToMazeAboveCursorAndKeepLooping();
 		}
 
 		private void startLooping() {
-			if (hasFilledAllCells()) {
+			if (pathTracker.hasFilledAllCells()) {
 				return;
 			}
-			if (currentColumn - 1 == 0 || wArray[currentColumn - 1][currentRow] != 0) {
+			if (pathTracker.cannotGoLeft()) {
 				moveCursorAbout();
 			} else {
-		        if (onFirstRow() || isWarrayCellAboveOccupied()) {
+		        if (pathTracker.cannotGoUp()) {
 					workOutNextStepsWhileFacingDownwards();
 		        } else {
-	                if (onLastColumn() || isWarrayCellToRightOccupied()) {
+	                if (pathTracker.cannotGoRight()) {
 	                    nextState(350);
 	                } else {
                         nextState(330);
@@ -501,24 +420,6 @@ public class Amazing {
 			}
 		}
 
-
-		private void goToNextCellLocationWithWrapping() {
-			if (notAtRightMostColumn()) {
-				currentColumn++;
-			} else {
-			    currentColumn = 1;
-			    if (!onLastRow()) {
-			        currentRow++;
-			    } else {
-			        currentRow = 1;
-			    }
-			}
-		}
-
-
-		private boolean notAtRightMostColumn() {
-			return currentColumn != width;
-		}
 
 
 		public static void nextState(int lineno) {
@@ -582,7 +483,7 @@ public class Amazing {
 
 	}
 
-	private static int[][] constructBlankMaze1BasedArray(int width, int height) {
+	static int[][] constructBlankMaze1BasedArray(int width, int height) {
 		int[][] array = new int[width + 1][height + 1];
         for (int i = 0; i <= width; i++) {
             array[i] = new int[height + 1];
