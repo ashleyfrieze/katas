@@ -86,66 +86,29 @@ public class Amazing {
 	                    break;
 	                }
 	                
-	            	
-	                case 390: {
-	                    int x = randomChoiceOfFour();
-	                    if (x == 1)
-	                        routeGoesLeft();
-	                    else if (x == 2)
-	                    	routeGoesUp();
-	                    else if (x == 3)
-	                        goDownAndForceDownwardRoute();
-	                    else
-	                    	selectLeftUpOrDown();
-	                    break;
-	                }
-	                
-
-	                case 680: {
-	                    int x = randomChoiceOfFour();
-	                    if (x == 1)
-	                    	routeGoesUp();
-	                    else if (x == 2)
-	                    	routeGoesRight();
-	                    else if (x == 3)
-	                    	goDownAndForceDownwardRoute();
-	                    else
-	                    	decisionPoint700();
-	                    break;
-	                }
-	                
-	                
 	                case 350:
-	                	if ((!onLastRow() && isWarrayCellBelowOccupied())||onLastRow() && routeWantsToGoDown) {
+	                	if ((!onLastRow() && isGoingDownImpossible())||onLastRow() && routeWantsToGoDown) {
 	                		selectLeftUpOrDown();
 	                	} else {
 	                		if (onLastRow()) {
 	                            routeWantsToGoUp = true;
 	                		}
-	                		nextState(390);
+		                    int x = randomChoiceOfFour();
+		                    if (x == 1)
+		                        routeGoesLeft();
+		                    else if (x == 2)
+		                    	routeGoesUp();
+		                    else if (x == 3)
+		                        goDownAndForceDownwardRoute();
+		                    else
+		                    	selectLeftUpOrDown();
 	                	}
 	                    break;
 
 
-	                case 720:
-	                    if (!onLastRow()) {
-	                        if (isWarrayCellBelowOccupied()) {
-	                        	routeGoesUp();
-	                        } else {
-	                        	do1090orWriteCintoWarrayAndProceed();
-	                        }
-	                    } else {
-	                        if (routeWantsToGoDown) {
-	                        	routeGoesUp();
-	                        } else {
-	                            routeWantsToGoUp = true;
-	                            do1090orWriteCintoWarrayAndProceed();
-	                        }
-	                    }
-	                    break;
 	                case 790:
 	                    if (onLastColumn() || isWarrayCellToRightOccupied()) {
-	                    	if ((!onLastRow() && isWarrayCellBelowOccupied()) || (onLastRow() && routeWantsToGoDown)) {
+	                    	if ((!onLastRow() && isGoingDownImpossible()) || (onLastRow() && routeWantsToGoDown)) {
 								goToNextCellLocationWithWrapping();
 								findPointOnRouteThenStartLooping();
 							} else {
@@ -153,7 +116,7 @@ public class Amazing {
 							} 
 	                    } else {
                             if (!onLastRow()) {
-                                if (isWarrayCellBelowOccupied()) {
+                                if (isGoingDownImpossible()) {
                                 	routeGoesRight();
                                 } else {
             	                    selectDownOrRight();
@@ -162,9 +125,8 @@ public class Amazing {
                                 if (routeWantsToGoDown) {
                                 	routeGoesRight();
                                 } else {
-                                    routeWantsToGoUp = true;
                         			cellBeingFilled++;
-                                    addRouteToMazeAboveCursorAndDecideWhetherToStop();
+                                    addRouteToMazeAboveCursorAndKeepLooping();
                                 }
                             }
 	                        
@@ -181,6 +143,38 @@ public class Amazing {
 	        
 	        return vArray;
 	    }
+
+
+		private void selectAnyDirection() {
+			int x = randomChoiceOfFour();
+			if (x == 1)
+				routeGoesUp();
+			else if (x == 2)
+				routeGoesRight();
+			else if (x == 3)
+				goDownAndForceDownwardRoute();
+			else
+				selectUpRightDownOrReturnUp();
+		}
+
+
+		private void moveDownIfPossibleOrReverse() {
+			if (onLastRow()) {
+			    if (routeWantsToGoDown) {
+			    	routeGoesUp();
+			    } else {
+			        routeWantsToGoUp = true;
+			        selectUpOrDown();
+			    }
+
+			} else {
+			    if (isGoingDownImpossible()) {
+			    	routeGoesUp();
+			    } else {
+			    	selectUpOrDown();
+			    }
+			}
+		}
 
 
 
@@ -227,16 +221,16 @@ public class Amazing {
 		
 		private void goDownOrLeft() {
 			if (!onLastRow()) {
-			    if (isWarrayCellBelowOccupied())
+			    if (isGoingDownImpossible())
 			        routeGoesLeft();
 			    else
-			    	eitherMakeCurrentPositionIntoRouteOrLoopSomeMore();
+			    	selectDownOrLeft();
 			} else {
 			    if (routeWantsToGoDown) {
 			        routeGoesLeft();
 			    } else {
 			        routeWantsToGoUp = true;
-			        eitherMakeCurrentPositionIntoRouteOrLoopSomeMore();
+			        selectDownOrLeft();
 			    }
 			}
 		}
@@ -264,7 +258,7 @@ public class Amazing {
 				goDownOrLeft();
 			} else {
                 if (!onLastRow()) {
-                    if (isWarrayCellBelowOccupied())
+                    if (isGoingDownImpossible())
                     	selectLeftRightOrDown();
                     else
                     	selectLeftRightOrDownOrFaceDown();
@@ -295,19 +289,19 @@ public class Amazing {
 			    nextState(790);
 			} else {
 			    if (onLastColumn() || isWarrayCellToRightOccupied()) {
-			        nextState(720);
+			    	moveDownIfPossibleOrReverse();
 			    } else {
 			        if (!onLastRow()) {
-			            if (isWarrayCellBelowOccupied())
-			            	decisionPoint700();
+			            if (isGoingDownImpossible())
+			            	selectUpRightDownOrReturnUp();
 			            else
-			                nextState(680);
+			            	selectAnyDirection();
 			        } else {
 			            if (routeWantsToGoDown) {
-			            	decisionPoint700();
+			            	selectUpRightDownOrReturnUp();
 			            } else {
 			                routeWantsToGoUp = true;
-			                nextState(680);
+			                selectAnyDirection();
 			            }
 			        }
 			    }
@@ -396,8 +390,12 @@ public class Amazing {
 		}
 
 
-		private boolean isWarrayCellBelowOccupied() {
-			return wArray[currentColumn][currentRow + 1] != 0;
+		private boolean isGoingDownImpossible() {
+			return onLastRow() || wArray[currentColumn][currentRow + 1] != 0;
+		}
+		
+		private boolean isGoingDownPossible() {
+			return !isGoingDownImpossible();
 		}
 
 
@@ -406,7 +404,7 @@ public class Amazing {
 		}
 
 
-		private void do1090orWriteCintoWarrayAndProceed() {
+		private void selectUpOrDown() {
 			if (randomChoiceOfThree() == 2)
 				goDownAndForceDownwardRoute();
 			else
@@ -414,7 +412,7 @@ public class Amazing {
 		}
 
 
-		private void eitherMakeCurrentPositionIntoRouteOrLoopSomeMore() {
+		private void selectDownOrLeft() {
 			if (randomChoiceOfThree() == 2)
 				goDownAndForceDownwardRoute();
 			else
@@ -436,17 +434,20 @@ public class Amazing {
 		}
 
 
-		private void decisionPoint700() {
+		private void selectUpRightDownOrReturnUp() {
 			int x = randomChoiceOfThree();
 			if (x == 1)
 				routeGoesUp();
 			else if (x == 2)
 				routeGoesRight();
 			else
-			    nextState(720);
+				moveDownIfPossibleOrReverse();
 		}
 
-
+		private void trackInWarrayAboveCurrent() {
+			trackCellIdInWArray(currentColumn, currentRow - 1);
+		}
+		
 		private void trackInWarrayBelowCurrent() {
 			trackCellIdInWArray(currentColumn, currentRow+1);
 		}
@@ -467,23 +468,24 @@ public class Amazing {
 		}
 
 
-		private void addRouteToMazeAboveCursorAndDecideWhetherToStop() {
+		private void addRouteToMazeAboveCursorAndKeepLooping() {
 			vArray[currentColumn][currentRow - 1] = UP_OR_DOWN;
 			currentRow--;
-			if (!hasFilledAllCells()) {
-				routeWantsToGoUp = false;
-			    // continue
-			    startLooping();
-			}
+			routeWantsToGoUp = false;
+		    startLooping();
 		}
 
 
 		private void routeGoesUp() {
-			trackCellIdInWArray(currentColumn, currentRow - 1);
-			addRouteToMazeAboveCursorAndDecideWhetherToStop();
+			trackInWarrayAboveCurrent();
+			
+			addRouteToMazeAboveCursorAndKeepLooping();
 		}
 
 		private void startLooping() {
+			if (hasFilledAllCells()) {
+				return;
+			}
 			if (currentColumn - 1 == 0 || wArray[currentColumn - 1][currentRow] != 0) {
 				moveCursorAbout();
 			} else {
