@@ -25,7 +25,7 @@ public class MazeOutputter {
             print(LEFT_BORDER);
 
             for (int i = 1; i <= height; i++) {
-                if (maze[i][j] == Amazing.PASSAGE || maze[i][j] == Amazing.CORNER) {
+                if (maze[i][j] == MazeGenerator.PASSAGE || maze[i][j] == MazeGenerator.CORNER) {
                     print(GAP);
                 } else {
                     print(GAP_THEN_BORDER);
@@ -39,7 +39,7 @@ public class MazeOutputter {
 
 	private void printSeparatorLine(int width, int[][] maze, int row) {
 		for (int col = 1; col <= width; col++) {
-		    if (maze[col][row] == Amazing.DEAD_END || maze[col][row] == Amazing.PASSAGE) {
+		    if (maze[col][row] == MazeGenerator.DEAD_END || maze[col][row] == MazeGenerator.PASSAGE) {
 		        print(CLOSED_WALL);
 		    } else {
 		        print(OPENING);
